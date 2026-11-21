@@ -1,0 +1,131 @@
+<!doctype html>
+<!--
+  Página que hospeda o avatar do VLibras dentro da WebView do app.
+
+  Conversa com o app Android (VLibrasPlayer.kt):
+    - o app chama window.sinalizar("palavra") para o avatar sinalizar;
+    - a página chama AndroidBridge.onReady() quando o avatar terminou de carregar
+      e AndroidBridge.onErro(mensagem) se não conseguir baixar o plugin.
+    - o app chama window.repetir() para o avatar sinalizar a mesma palavra de novo.
+-->
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VLibras</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background: #111;
+        cursor: default !important;
+      }
+      #vlibras-access-wrapper {
+        display: none !important;
+      }
+    </style>
+    <script>
+      (function () {
+        var chave = "@vlibras/player";
+        try {
+          var salvo = JSON.parse(localStorage.getItem(chave) || "null") || { state: {}, version: 1 };
+          salvo.state = salvo.state || {};
+          salvo.state.showSubtitles = false;
+          localStorage.setItem(chave, JSON.stringify(salvo));
+        } catch (e) {
+          // Sem localStorage o avatar funciona igual, só que com legenda.
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+      (function () {
+        var pronto = false;
+        var ultimaPalavra = "";
+
+        var CSS_DO_WIDGET = [
+          ":host > button{display:none !important;}",
+          "#vlibras-app{position:fixed !important;inset:0 !important;top:0 !important;right:0 !important;" +
+            "width:100% !important;height:100% !important;transform:none !important;translate:none !important;" +
+            "animation:none !important;}",
+          "#vlibras-app > div{width:100% !important;height:100% !important;max-width:none !important;" +
+            "border-radius:0 !important;box-shadow:none !important;}",
+          "#vlibras-app-content{height:100% !important;}",
+          "#vlibras-app-content > :not(iframe){display:none !important;}",
+          "#vlibras-app-content > iframe{height:100% !important;max-height:none !important;margin:0 !important;}",
+        ].join("");
+
+        function estilizarWidget() {
+          var raiz = document.getElementById("vlibras-app-root");
+          if (!raiz || !raiz.shadowRoot) return false;
+          if (!raiz.shadowRoot.getElementById("sinalize-estilo")) {
+            var style = document.createElement("style");
+            style.id = "sinalize-estilo";
+            style.textContent = CSS_DO_WIDGET;
+            raiz.shadowRoot.appendChild(style);
+            window.dispatchEvent(new Event("resize"));
+          }
+          return true;
+        }
+
+        function avisarApp(metodo, valor) {
+          if (window.AndroidBridge && typeof window.AndroidBridge[metodo] === "function") {
+            window.AndroidBridge[metodo](valor || "");
+          }
+        }
+
+        function traduzir(texto) {
+          var termo = (texto || "").trim();
+          if (!termo || !window.plugin || typeof window.plugin.translate !== "function") return;
+          window.plugin.translate(termo);
+        }
+
+        window.sinalizar = function (texto) {
+          ultimaPalavra = texto || "";
+          if (pronto) traduzir(ultimaPalavra);
+        };
+
+        // Chamado pelo botão "Repetir" do app: sinaliza a mesma palavra de novo.
+        window.repetir = function () {
+          if (pronto && ultimaPalavra) traduzir(ultimaPalavra);
+        };
+
+        if (!window.VLibras) {
+          avisarApp("onErro", "Não foi possível baixar o plugin do VLibras.");
+          return;
+        }
+
+        new window.VLibras.Widget("https://vlibras.gov.br/app");
+
+        var abrir = setInterval(function () {
+          var widget = window.VLibrasWidget;
+          if (!widget || typeof widget.open !== "function") return;
+          clearInterval(abrir);
+          widget.open();
+        }, 200);
+
+        var esperarMotor = setInterval(function () {
+          estilizarWidget();
+          if (!(window.plugin && window.plugin.player)) return;
+          clearInterval(esperarMotor);
+          pronto = true;
+          estilizarWidget();
+          setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 500);
+          avisarApp("onReady");
+          if (ultimaPalavra) traduzir(ultimaPalavra);
+        }, 300);
+      })();
+    </script>
+  </body>
+</html>

@@ -5,8 +5,10 @@ import br.com.sinalize.api.dto.categoria.CategoriaRequest;
 import br.com.sinalize.api.dto.categoria.CategoriaResponse;
 import br.com.sinalize.api.entity.Categoria;
 import br.com.sinalize.api.entity.Usuario;
+import br.com.sinalize.api.exception.ConflitoException;
 import br.com.sinalize.api.exception.RecursoNaoEncontradoException;
 import br.com.sinalize.api.repository.CategoriaRepository;
+import br.com.sinalize.api.repository.PalavraRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,6 +35,9 @@ class CategoriaServiceTest {
 
     @Mock
     private CategoriaRepository categoriaRepository;
+
+    @Mock
+    private PalavraRepository palavraRepository;
 
     @Mock
     private UsuarioLogadoProvider usuarioLogado;
@@ -122,11 +127,58 @@ class CategoriaServiceTest {
     }
 
     @Test
-    void excluirExistenteApaga() {
+    void excluirCategoriaSemPalavrasApaga() {
         when(categoriaRepository.existsById(3L)).thenReturn(true);
+        when(palavraRepository.existsByCategorias_Id(3L)).thenReturn(false);
 
         categoriaService.excluir(3L);
 
         verify(categoriaRepository).deleteById(3L);
+    }
+
+    @Test
+    void excluirCategoriaComPalavrasLancaConflitoSemApagar() {
+        when(categoriaRepository.existsById(3L)).thenReturn(true);
+        when(palavraRepository.existsByCategorias_Id(3L)).thenReturn(true);
+
+        assertThatThrownBy(() -> categoriaService.excluir(3L))
+                .isInstanceOf(ConflitoException.class)
+                .hasMessage("Esta categoria possui palavras vinculadas. "
+                        + "Remova-as ou mude-as de categoria antes de excluir.");
+        verify(categoriaRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void criarComNomeRepetidoLancaConflitoSemSalvar() {
+        when(categoriaRepository.existsByNomeIgnoreCase("cores")).thenReturn(true);
+
+        assertThatThrownBy(() -> categoriaService.criar(new CategoriaRequest("  cores ", "Outra descrição.")))
+                .isInstanceOf(ConflitoException.class)
+                .hasMessage("Já existe uma categoria com esse nome.");
+        verify(categoriaRepository, never()).save(any());
+    }
+
+    @Test
+    void atualizarParaNomeDeOutraCategoriaLancaConflito() {
+        Categoria cores = comId(new Categoria("Cores", "d", admin), 3L);
+        when(categoriaRepository.findDetalhadaById(3L)).thenReturn(Optional.of(cores));
+        when(categoriaRepository.existsByNomeIgnoreCaseAndIdNot("Animais", 3L)).thenReturn(true);
+
+        assertThatThrownBy(() -> categoriaService.atualizar(3L, new CategoriaAtualizacaoRequest(" Animais ", null)))
+                .isInstanceOf(ConflitoException.class)
+                .hasMessage("Já existe uma categoria com esse nome.");
+        assertThat(cores.getNome()).isEqualTo("Cores");
+    }
+
+    @Test
+    void atualizarMudandoSoAsMaiusculasDoProprioNomeEhPermitido() {
+        Categoria cores = comId(new Categoria("Cores", "d", admin), 3L);
+        when(categoriaRepository.findDetalhadaById(3L)).thenReturn(Optional.of(cores));
+        when(categoriaRepository.existsByNomeIgnoreCaseAndIdNot("CORES", 3L)).thenReturn(false);
+        when(usuarioLogado.obter()).thenReturn(admin);
+
+        CategoriaResponse resposta = categoriaService.atualizar(3L, new CategoriaAtualizacaoRequest("CORES", null));
+
+        assertThat(resposta.nome()).isEqualTo("CORES");
     }
 }

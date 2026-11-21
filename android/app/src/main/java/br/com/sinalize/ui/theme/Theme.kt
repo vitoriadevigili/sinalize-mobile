@@ -5,23 +5,30 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-private val SinalizeColors = lightColorScheme(
-    primary = Teal,
+private val CoresSinalize = lightColorScheme(
+    primary = AzulSinalize,
     onPrimary = Color.White,
-    primaryContainer = PaleTeal,
-    onPrimaryContainer = Navy,
-    secondary = Navy,
+    primaryContainer = AzulSinalize,
+    onPrimaryContainer = Color.White,
+    secondary = AzulSinalize,
     onSecondary = Color.White,
-    background = Background,
-    onBackground = Navy,
+    secondaryContainer = CinzaBotao,
+    onSecondaryContainer = TextoEscuro,
+    background = FundoPagina,
+    onBackground = TextoEscuro,
     surface = Color.White,
-    onSurface = Navy,
-    surfaceVariant = PaleTeal,
-    onSurfaceVariant = Muted,
-    outline = OutlineSoft
+    onSurface = TextoEscuro,
+    surfaceVariant = CinzaBotao,
+    onSurfaceVariant = TextoSecundario,
+    surfaceContainerHigh = Color.White,
+    surfaceContainerHighest = Color.White,
+    outline = BordaCampo,
+    outlineVariant = CinzaBotao,
+    error = VermelhoExcluir,
 )
 
+/** O site é claro; o app segue a mesma identidade, sem tema escuro. */
 @Composable
 fun SinalizeTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colorScheme = SinalizeColors, typography = Typography, content = content)
+    MaterialTheme(colorScheme = CoresSinalize, typography = Typography, content = content)
 }

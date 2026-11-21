@@ -197,6 +197,36 @@ class PalavraControllerTest {
     }
 
     @Test
+    void criarPalavraRepetidaDevolve409() throws Exception {
+        when(palavraService.criar(any())).thenThrow(new ConflitoException("Já existe uma palavra com esse nome."));
+
+        mockMvc.perform(post("/palavras")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"palavra": " uva ", "categoria_ids": [5]}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message").value("Já existe uma palavra com esse nome."))
+                .andExpect(jsonPath("$.path").value("/palavras"));
+    }
+
+    @Test
+    void atualizarParaPalavraRepetidaDevolve409() throws Exception {
+        when(palavraService.atualizar(any(), any()))
+                .thenThrow(new ConflitoException("Já existe uma palavra com esse nome."));
+
+        mockMvc.perform(patch("/palavras/10")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"palavra": "Banana"}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe uma palavra com esse nome."));
+    }
+
+    @Test
     void naoChamaServiceQuandoCorpoInvalido() throws Exception {
         mockMvc.perform(post("/palavras").contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest())

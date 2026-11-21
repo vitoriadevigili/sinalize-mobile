@@ -1,405 +1,264 @@
 # Sinalize Mobile
 
-Quiz interativo para aprender **Libras** (Língua Brasileira de Sinais). Um avatar 3D do
-[VLibras](https://www.gov.br/governodigital/pt-br/vlibras) sinaliza uma palavra, e o jogador
-escolhe entre quatro alternativas qual palavra foi sinalizada.
+<p align="center">
+  <img src="android/app/src/main/res/drawable/sinalize_logo.png" width="150" alt="Sinalize Logo" />
+  <a href="https://developer.android.com/" target="blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/android/android-original.svg" width="100" alt="Android Logo" /></a>
+  <a href="https://spring.io/projects/spring-boot" target="blank"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg" width="100" alt="Spring Logo" /></a>
+</p>
 
-Este repositório leva para o mobile o projeto Sinalize, criado originalmente na disciplina de
-Informática na Educação (TADS/UDESC) com NestJS + React. Ele tem duas partes:
+O **Sinalize Mobile** é a versão para Android do **Sinalize**, um quiz interativo e acessível voltado para o aprendizado da Língua Brasileira de Sinais (Libras). Um avatar 3D do **VLibras** sinaliza uma palavra e o jogador escolhe, entre quatro alternativas, qual palavra foi sinalizada.
 
-| Parte | Pasta | Tecnologias |
-|---|---|---|
-| Back-end (API REST) | [`backend/`](backend) | Java 21, Spring Boot 3.5, Spring Web, Spring Data JPA, Bean Validation, Flyway, PostgreSQL 16 |
-| App Android | [`android/`](android) | Kotlin, Jetpack Compose, MVVM (ViewModel + StateFlow), Navigation Compose, Retrofit + OkHttp |
+O projeto nasceu na disciplina de Informática na Educação com um front-end em React e um back-end em NestJS, e foi trazido para o mobile na disciplina de **Programação para Dispositivos Móveis**. Este repositório reúne as duas partes:
 
-> 🚧 O back-end está concluído; o app Android está em desenvolvimento. Este README é atualizado a cada etapa.
+- **App Android** (`android/`): construído com **Kotlin** e **Jetpack Compose**, reproduz o visual da versão web (mesmas telas, cores e ícones) e se adapta a celulares e tablets, em pé ou deitados.
+- **Back-end** (`backend/`): uma API REST em **Spring Boot** com arquitetura em camadas (Controllers, Services e Repositories) e persistência no **PostgreSQL**, com o banco versionado pelo **Flyway**.
 
-## Status
+---
 
-| Etapa | Descrição | Situação |
-|---|---|---|
-| B1 | Estrutura do back-end, docker-compose e configuração | ✅ |
-| B2 | Migrations Flyway, entidades e dados iniciais | ✅ |
-| B3 | Tratamento global de erros + Categorias | ✅ |
-| B4 | Palavras | ✅ |
-| B5 | Quizzes | ✅ |
-| B6 | Usuários + testes de integração | ✅ |
-| A1–A7 | App Android | ⏳ |
+## Autores
 
-## Pré-requisitos
+Pedro Paoli Neto
 
-- **JDK 21**, com a variável `JAVA_HOME` apontando para ele (o Maven Wrapper usa o `JAVA_HOME`).
-  Atenção: se o `JAVA_HOME` apontar para o JDK que vem com o Android Studio (`...\Android Studio\jbr`),
-  o Maven usará esse JDK. Para usar o JDK 21 só na sessão atual do PowerShell:
-  `$env:JAVA_HOME = "C:\caminho\do\jdk-21"`
-- **Docker Desktop** (para o PostgreSQL)
-- **Android Studio** com um emulador (API 26 ou superior)
+Luís Felipe dos Anjos de Carvalho
 
-Não é preciso instalar o Maven: o projeto usa o Maven Wrapper (`mvnw` / `mvnw.cmd`).
+Isadora Pimenta de Oliveira
 
-## Como executar o back-end
+Larissa Colzani
 
-Os comandos abaixo são para o PowerShell, a partir da raiz do repositório.
+Vitória Carolina Devigili
 
-1. Inicie o Docker Desktop e suba o banco:
+---
 
-   ```powershell
-   docker compose up -d
-   docker compose ps        # aguarde o status "healthy"
-   ```
+## Tecnologias
 
-   O PostgreSQL fica disponível em `localhost:5433`, no banco `sinalize` (usuário e senha `sinalize`).
+**App Android**
 
-2. Rode a API:
+- [**Kotlin**](https://kotlinlang.org/)
+- [**Jetpack Compose**](https://developer.android.com/compose) com [**Material 3**](https://m3.material.io/)
+- [**Navigation Compose**](https://developer.android.com/guide/navigation/navigation-compose) e **ViewModel** (arquitetura MVVM)
+- [**Retrofit**](https://square.github.io/retrofit/), [**OkHttp**](https://square.github.io/okhttp/) e [**kotlinx.serialization**](https://github.com/Kotlin/kotlinx.serialization)
+- [**VLibras**](https://www.gov.br/governodigital/pt-br/acessibilidade-e-usuario/vlibras), exibido em uma `WebView`
 
-   ```powershell
-   cd backend
-   .\mvnw.cmd spring-boot:run
-   ```
+**Back-end**
 
-   A API sobe em `http://localhost:8080`.
+- [**Java 21**](https://openjdk.org/projects/jdk/21/)
+- [**Spring Boot 3.5**](https://spring.io/projects/spring-boot) (Spring Web, Spring Data JPA e Bean Validation)
+- [**PostgreSQL 16**](https://www.postgresql.org/) rodando no [**Docker**](https://www.docker.com/)
+- [**Flyway**](https://flywaydb.org/) para as migrations
 
-3. Confira se ela está no ar:
+---
 
-   ```powershell
-   curl.exe http://localhost:8080/actuator/health
-   # {"status":"UP"}
-   ```
+## Funcionalidades
 
-### Configuração
+- **Página Inicial:** Tela de entrada com o acesso ao quiz, ao dicionário e às informações sobre o projeto.
+- **Quiz:** O usuário escolhe uma ou mais categorias, assiste ao sinal executado pelo avatar 3D do VLibras e escolhe entre quatro alternativas. A resposta fica verde ou vermelha, o progresso aparece no topo e, ao final, é exibido o resultado. O botão **Repetir** faz o avatar sinalizar a palavra de novo.
+- **Dicionário:** Gerenciamento das **palavras** e **categorias**, com busca, filtro por letra, ordenação e cadastro, edição e exclusão.
 
-Os valores padrão estão em [`backend/src/main/resources/application.yml`](backend/src/main/resources/application.yml)
-e podem ser sobrescritos por variáveis de ambiente:
+<p align="center">
+  <img src="README_imgs/home.png" width="220" alt="Página inicial" />
+  <img src="README_imgs/categorias.png" width="220" alt="Escolha das categorias do quiz" />
+  <img src="README_imgs/quiz.png" width="220" alt="Quiz com o avatar do VLibras" />
+  <img src="README_imgs/dicionario.png" width="220" alt="Dicionário" />
+</p>
 
-| Variável | Padrão | Uso |
-|---|---|---|
-| `DB_URL` | `jdbc:postgresql://localhost:5433/sinalize` | URL JDBC do banco |
-| `DB_USER` / `DB_PASSWORD` | `sinalize` / `sinalize` | Credenciais (também usadas pelo `docker-compose.yml`) |
-| `DB_PORT` | `5433` | Porta exposta pelo container do banco |
-| `SERVER_PORT` | `8080` | Porta da API |
+O layout acompanha o tamanho da tela, seguindo os mesmos pontos de quebra da versão web: o dicionário mostra de 1 a 4 cards por linha e as alternativas do quiz passam para duas colunas em telas mais largas. Com o celular deitado, a página inicial coloca o logo ao lado dos botões.
 
-Na primeira subida, o Flyway cria as tabelas e carrega os dados iniciais (veja [Modelo de dados](#modelo-de-dados)).
-No log deve aparecer `Successfully applied 2 migrations to schema "public"`.
+---
 
-### Parar o ambiente
+## Integração com o VLibras
 
-```powershell
-docker compose down        # para o banco e mantém os dados
-docker compose down -v     # para o banco e apaga os dados (o Flyway recria tudo na próxima subida)
+A sinalização é isolada em uma página HTML (`android/app/src/main/assets/vlibras-frame.html`) que carrega o plugin oficial do VLibras dentro de uma `WebView`. A classe `MotorVLibras` faz a ponte entre o app e essa página:
+
+- A página avisa o app quando o avatar 3D está pronto (`AndroidBridge.onReady()`).
+- O app envia a palavra a ser sinalizada (`window.sinalizar("...")`) e pode pedir para repeti-la (`window.repetir()`).
+
+Como o avatar leva alguns segundos para carregar, ele começa a ser carregado assim que o app abre, ainda na página inicial. Quando a pessoa entra no quiz, o avatar normalmente já está pronto; se não estiver, o quiz espera por ele antes de mostrar a primeira pergunta. A página também esconde a legenda do VLibras, que mostraria a palavra e entregaria a resposta.
+
+> O plugin do VLibras mudou de versão desde o projeto web (ele agora é aberto por `window.VLibrasWidget.open()`), e a página do app já está adaptada a isso.
+
+---
+
+## Modelo de Dados
+
+A estrutura relacional segue a do projeto original, com regras de integridade referencial entre as seguintes entidades:
+
+* **Usuarios:** Gerencia os dados do usuário que acessa o projeto. Por enquanto não há login, então todas as operações são feitas em nome de um usuário padrão.
+* **Categorias:** Agrupam palavras de mesmo escopo/contexto (Saudações, Família, Cores...).
+* **Palavras:** Palavras para uso no quiz. Cada palavra pertence a pelo menos uma categoria.
+* **Quizzes:** Histórico de jogos realizados pelos usuários.
+* **Quiz_Palavras:** Tabela associativa do histórico do quiz contendo **atributos próprios** (`acertou` e `respondido_em`) para registrar o desempenho de cada palavra respondida pelo usuário.
+
+O banco é criado pelo Flyway a partir de três migrations: `V1` (tabelas), `V2` (dados iniciais: 6 categorias e 44 palavras) e `V3` (nomes únicos para palavras e categorias).
+
+---
+
+## Estrutura do Projeto
+
+O repositório é dividido entre o app e a API. No app, cada tela tem a sua pasta, com a interface (Compose) e o seu `ViewModel`; a comunicação com a API fica na camada `data`. No back-end, a organização segue a separação em camadas do Spring.
+
+```text
+sinalize-mobile/
+├── android/                          # App Android (abrir esta pasta no Android Studio)
+│   └── app/src/main/
+│       ├── assets/vlibras-frame.html # Página que hospeda o avatar do VLibras
+│       └── java/br/com/sinalize/
+│           ├── data/
+│           │   ├── model/            # Modelos usados pelas telas
+│           │   ├── remote/           # Retrofit: rotas da API, JSON e tratamento de erros
+│           │   ├── repository/       # Interfaces de acesso aos dados
+│           │   └── fake/             # Dados de exemplo em memória
+│           ├── di/                   # AppContainer (injeção de dependências)
+│           ├── ui/
+│           │   ├── home/             # Página inicial e "Sobre o Projeto"
+│           │   ├── quiz/             # Quiz, avatar e resultado
+│           │   ├── dicionario/       # Dicionário de palavras e categorias
+│           │   ├── components/       # Header, rodapé, botões e regras de responsividade
+│           │   └── theme/            # Cores e tema
+│           └── vlibras/              # MotorVLibras (WebView do avatar)
+├── backend/                          # API REST em Spring Boot
+│   ├── requests.http                 # Requisições prontas para testar a API
+│   └── src/main/
+│       ├── java/br/com/sinalize/api/
+│       │   ├── controller/
+│       │   ├── service/
+│       │   ├── repository/
+│       │   ├── entity/
+│       │   ├── dto/
+│       │   └── exception/
+│       └── resources/
+│           ├── application.yml
+│           └── db/migration/         # Migrations do Flyway
+├── docker-compose.yml                # PostgreSQL para desenvolvimento
+└── README_imgs/                      # Imagens deste README
 ```
 
-### Testes automatizados
+---
 
-São 78 testes, em dois grupos:
+## Como Configurar e Rodar o Projeto
 
-| Comando | O que roda | Precisa do banco? |
-|---|---|---|
-| `.\mvnw.cmd test` | 74 testes de unidade: controllers com `@WebMvcTest` (MockMvc) e services com Mockito | Não |
-| `.\mvnw.cmd verify` | Os testes de unidade + 4 testes de integração (`SinalizeApiIT`): aplicação completa contra o PostgreSQL real | Sim (`docker compose up -d`) |
+Siga as instruções abaixo para configurar o ambiente de desenvolvimento localmente. Os comandos são para o PowerShell, a partir da raiz do repositório.
 
-```powershell
-cd backend
-.\mvnw.cmd test
-.\mvnw.cmd verify
+### 1. Pré-requisitos
+
+Antes de começar, certifique-se de ter instalado em sua máquina:
+
+* [JDK 21](https://adoptium.net/) (não é preciso instalar o Maven, o projeto já traz o Maven Wrapper)
+* [Docker](https://www.docker.com/) e Docker Compose
+* [Android Studio](https://developer.android.com/studio) com um emulador (Android 8.0 ou superior)
+
+> 💡 O Maven usa o JDK apontado pela variável `JAVA_HOME`. Se ela estiver apontando para o Java que vem com o Android Studio, ajuste-a para o JDK 21 antes de rodar a API: `$env:JAVA_HOME = "C:\caminho\do\jdk-21"`.
+
+### 2. Clonar o Repositório
+
+```bash
+$ git clone https://github.com/paoli2004/sinalize-mobile.git
+$ cd sinalize-mobile
 ```
 
-Os testes de integração usam o mesmo container do PostgreSQL, mas no schema **`it`**, que o Flyway
-apaga e recria a cada execução. Os dados de desenvolvimento (schema `public`) não são alterados. Eles
-cobrem:
-- as migrations e os dados iniciais;
-- uma partida completa: criar o quiz, buscar as alternativas, responder todas as palavras e conferir
-  o resultado gravado no banco;
-- o ciclo de vida de uma palavra: criar, trocar as categorias e excluir;
-- usuários: senha gravada como hash BCrypt e nunca devolvida, e-mail duplicado e exclusão bloqueada.
+### 3. Inicializar o Banco de Dados (Docker)
+
+A API utiliza um banco PostgreSQL rodando de forma isolada em um container Docker. Para criá-lo e inicializá-lo, execute:
+
+```bash
+# Inicializar o container do Postgres em segundo plano
+$ docker compose up -d
+```
+
+O banco fica disponível na porta **5433** (banco, usuário e senha: `sinalize`). Não é preciso rodar as migrations manualmente: o Flyway cria as tabelas e carrega os dados iniciais na primeira vez que a API sobe.
+
+```bash
+# 💡 Dica: para apagar o banco e começar do zero (o Flyway recria tudo na próxima subida da API)
+$ docker compose down -v
+$ docker compose up -d
+```
+
+### 4. Iniciar a API
+
+```bash
+$ cd backend
+$ .\mvnw.cmd spring-boot:run
+```
+
+A API estará ativa na porta **http://localhost:8080**. Para conferir se ela está no ar, acesse `http://localhost:8080/actuator/health`, que deve responder `{"status":"UP"}`.
+
+### 5. Rodar o App
+
+1. Abra a pasta **`android/`** no Android Studio (não a raiz do repositório) e espere o *Gradle Sync* terminar.
+2. Ligue um emulador pelo *Device Manager* e espere ele chegar à tela inicial do Android.
+3. Selecione a configuração **`app`** e clique em **▶ Run**.
+4. Na primeira vez que o app abrir, toque em **Permitir** quando o Android perguntar se o Sinalize pode se conectar a dispositivos próximos.
+
+Também é possível instalar o app pelo terminal, dentro da pasta `android/`:
+
+```bash
+$ .\gradlew.bat installDebug
+```
+
+> 💡 **Por que o app pede essa permissão?** A partir do Android 17, um app só consegue acessar endereços da rede local (como a API rodando no seu computador) se o usuário permitir. Essa permissão e o acesso por `http://` existem apenas na versão de desenvolvimento do app.
+
+#### Configurações opcionais
+
+Por padrão, o app procura a API em `http://10.0.2.2:8080/`, que é o endereço do seu computador visto de dentro do emulador. Duas opções podem ser passadas na compilação (com `-P` no terminal ou no arquivo `android/gradle.properties`):
+
+* **`sinalizeApiUrl`**: muda o endereço da API. Para usar um **celular físico**, informe o IP do computador na rede Wi-Fi, por exemplo `.\gradlew.bat installDebug -PsinalizeApiUrl=http://192.168.0.10:8080/`.
+* **`sinalizeDadosIlustrativos`**: com o valor `true`, o app usa dados de exemplo em memória e funciona **sem o back-end**, o que é útil para mostrar as telas rapidamente.
+
+#### Problemas comuns
+
+* **"Não foi possível conectar ao servidor":** verifique se a API está no ar e se a permissão de dispositivos próximos foi concedida (*Configurações → Apps → Sinalize → Permissões*). Em celular físico, confira o IP informado e se o Firewall do Windows libera a porta 8080.
+* **O avatar não aparece:** o VLibras precisa de internet. No emulador, o primeiro carregamento pode levar de 20 a 60 segundos; em celulares de verdade é bem mais rápido.
+* **Mensagem em vermelho ao salvar no dicionário:** é uma regra da API, como uma palavra ou categoria com nome repetido. O app mostra a mensagem enviada pelo back-end.
+
+---
 
 ## API REST
 
-Base: `http://localhost:8080`. O arquivo [`backend/requests.http`](backend/requests.http) traz
-requisições prontas para o HTTP Client do IntelliJ ou para a extensão REST Client do VS Code.
+A API segue o padrão REST e usa JSON com os nomes de campo em `snake_case`, como no projeto original. O arquivo `backend/requests.http` traz requisições prontas para testá-la pelo IntelliJ ou pela extensão REST Client do VS Code.
 
-### Convenções
+* **Categorias:** `GET /categorias`, `GET /categorias/{id}`, `POST /categorias`, `PATCH /categorias/{id}` e `DELETE /categorias/{id}`.
+* **Palavras:** `GET /palavras`, `GET /palavras/{id}`, `POST /palavras`, `PATCH /palavras/{id}`, `DELETE /palavras/{id}` e `GET /palavras/aleatorias?excluir=1,2&quantidade=3`, usada para sortear as alternativas erradas do quiz.
+* **Quizzes:** `POST /quizzes` (com `{"categoria_ids": [..]}`, sorteia até 5 palavras), `GET /quizzes`, `GET /quizzes/{id}` e `PATCH /quizzes/palavras/{id}/responder` (com `{"acertou": true}`).
+* **Usuários:** `GET`, `POST`, `PATCH` e `DELETE` em `/usuarios`, com a senha gravada em hash BCrypt.
 
-- JSON em `snake_case`, com os mesmos nomes de campo do projeto original (`criado_em`, `criado_por`...).
-- `POST` devolve **201 Created**, com o header `Location` e o recurso criado no corpo.
-- `PATCH` faz atualização **parcial**: campos omitidos não mudam. Devolve **200** com o recurso atualizado.
-- `DELETE` devolve **204 No Content**.
-- Campos desconhecidos no corpo são rejeitados com 400.
-- Datas no formato ISO-8601 (`2026-11-10T20:30:07.08866`).
-
-### Formato de erro
-
-Todos os erros seguem o mesmo formato, gerado pelo `GlobalExceptionHandler` (`@RestControllerAdvice`):
+Todos os erros seguem o mesmo formato, com uma mensagem pronta para ser exibida ao usuário (e, em erros de validação, a mensagem de cada campo):
 
 ```json
 {
   "timestamp": "2026-11-10T20:29:06.5433203-03:00",
-  "status": 400,
-  "error": "Bad Request",
-  "message": "Dados inválidos.",
-  "path": "/categorias",
-  "campos": [
-    { "campo": "descricao", "mensagem": "O campo descricao é obrigatório." },
-    { "campo": "nome", "mensagem": "O campo nome é obrigatório." }
-  ]
+  "status": 409,
+  "error": "Conflict",
+  "message": "Já existe uma palavra com esse nome.",
+  "path": "/palavras"
 }
 ```
 
-`campos` só aparece em erros de validação.
+Em relação à API original em NestJS, algumas regras foram ajustadas: palavras e categorias não podem se repetir, uma categoria com palavras não pode ser excluída, uma palavra já usada em quiz não pode ser apagada e cada item do quiz só pode ser respondido uma vez. Erros que antes resultavam em falhas internas (500) agora retornam mensagens claras.
 
-| Status | Quando |
-|---|---|
-| 400 | Validação, JSON malformado, campo desconhecido, parâmetro com tipo inválido |
-| 404 | Recurso ou rota inexistente |
-| 405 | Método HTTP não suportado na rota |
-| 409 | Conflito com os dados existentes (ex.: e-mail duplicado, palavra já usada em quiz, palavra do quiz já respondida) |
-| 422 | Requisição válida que uma regra de negócio impede (ex.: quiz com categorias sem palavras) |
-| 415 | `Content-Type` diferente de `application/json` |
-| 500 | Erro inesperado (detalhes só no log do servidor) |
+---
 
-### Categorias
+## Testes
 
-| Método | Rota | Corpo | Resposta |
-|---|---|---|---|
-| GET | `/categorias` | – | 200, lista ordenada por data de criação |
-| GET | `/categorias/{id}` | – | 200, ou 404 |
-| POST | `/categorias` | `{"nome", "descricao"}`, ambos obrigatórios (máx. 255 / 400) | 201 |
-| PATCH | `/categorias/{id}` | `{"nome"?, "descricao"?}`; se enviados, não podem estar em branco | 200, ou 404 |
-| DELETE | `/categorias/{id}` | – | 204, ou 404. Remove os vínculos com palavras; as palavras continuam existindo |
+```bash
+# Back-end: testes de unidade (controllers e services)
+$ cd backend
+$ .\mvnw.cmd test
 
-Exemplo de resposta:
+# Back-end: testes de unidade + testes de integração com o PostgreSQL (precisa do Docker no ar)
+$ .\mvnw.cmd verify
 
-```json
-{
-  "id": 1,
-  "nome": "Saudações",
-  "descricao": "Cumprimentos e expressões de cortesia do dia a dia.",
-  "criado_em": "2026-11-10T20:20:22.362653",
-  "atualizado_em": null,
-  "criado_por": { "id": 1, "nome": "Administrador" },
-  "atualizado_por": null
-}
+# App Android: testes de unidade (filtros, quiz, responsividade e comunicação com a API)
+$ cd android
+$ .\gradlew.bat testDebugUnitTest
 ```
 
-Exemplo no PowerShell (`curl.exe` evita o alias `curl` do PowerShell):
+Os testes de integração do back-end usam um schema separado no banco (`it`), então os dados de desenvolvimento não são alterados.
 
-```powershell
-curl.exe -i -X POST http://localhost:8080/categorias -H "Content-Type: application/json" -d '{\"nome\":\"Esportes\",\"descricao\":\"Modalidades esportivas.\"}'
-```
+---
 
-### Palavras
+## Repositórios do projeto
 
-| Método | Rota | Entrada | Resposta |
-|---|---|---|---|
-| GET | `/palavras` | – | 200, lista com as categorias de cada palavra |
-| GET | `/palavras/aleatorias` | Query: `excluir` (ids separados por vírgula, opcional) e `quantidade` (1 a 20, padrão 3) | 200, `[{"id", "palavra"}]` sorteadas entre todas as palavras |
-| GET | `/palavras/{id}` | – | 200, ou 404 |
-| POST | `/palavras` | `{"palavra", "categoria_ids": [..]}`, com ao menos 1 categoria | 201, ou 404 se alguma categoria não existir |
-| PATCH | `/palavras/{id}` | `{"palavra"?, "categoria_ids"?}`; `categoria_ids` substitui todas as categorias | 200, ou 404 |
-| DELETE | `/palavras/{id}` | – | 204, 404, ou **409** se a palavra já foi usada em algum quiz |
+Repositório Sinalize Mobile (Android + Spring Boot) (Este!)
 
-O app usa `/palavras/aleatorias?excluir=<id da palavra correta>&quantidade=3` para montar as
-alternativas erradas do quiz.
+[Repositório Front-end original (React)](https://github.com/joaosell/sinalize)
 
-Exemplo de resposta (`GET /palavras/9`):
-
-```json
-{
-  "id": 9,
-  "palavra": "Laranja",
-  "criado_em": "2026-11-10T20:30:01.1055",
-  "atualizado_em": null,
-  "criado_por": { "id": 1, "nome": "Administrador" },
-  "atualizado_por": null,
-  "categorias": [
-    { "id": 5, "nome": "Alimentos" },
-    { "id": 3, "nome": "Cores" }
-  ]
-}
-```
-
-### Quizzes
-
-| Método | Rota | Entrada | Resposta |
-|---|---|---|---|
-| POST | `/quizzes` | `{"categoria_ids": [..]}`, com ao menos 1 categoria | 201 com o quiz; 404 se alguma categoria não existir; **422** se as categorias não tiverem palavras |
-| GET | `/quizzes` | – | 200, lista de quizzes com os itens |
-| GET | `/quizzes/{id}` | – | 200, ou 404 |
-| PATCH | `/quizzes/palavras/{quizPalavraId}/responder` | `{"acertou": true\|false}` | 200 com o item atualizado; 404; **409** se o item já foi respondido |
-
-Regras:
-- Cada quiz sorteia **até 5 palavras distintas** (`sinalize.quiz.quantidade-palavras`) entre as palavras
-  das categorias escolhidas. Uma palavra que está em mais de uma categoria escolhida não aparece duas vezes.
-- `quiz_palavras` vem na ordem em que as palavras devem ser apresentadas.
-- `acertou` e `respondido_em` ficam `null` até o jogador responder. Cada item só pode ser respondido uma vez.
-- As alternativas erradas não são gravadas: o app as busca em `/palavras/aleatorias`.
-
-Fluxo de uma partida no app:
-
-```mermaid
-sequenceDiagram
-    participant App
-    participant API
-    App->>API: GET /categorias
-    App->>API: POST /quizzes {"categoria_ids": [3, 5]}
-    API-->>App: 201 quiz com até 5 quiz_palavras
-    loop para cada item de quiz_palavras
-        App->>API: GET /palavras/aleatorias?excluir={id da palavra}&quantidade=3
-        Note over App: VLibras sinaliza a palavra e o app mostra 4 alternativas
-        App->>API: PATCH /quizzes/palavras/{id}/responder {"acertou": true}
-    end
-    Note over App: Tela de resultado (acertos / total)
-```
-
-Exemplo de resposta (`POST /quizzes`):
-
-```json
-{
-  "id": 2,
-  "criado_em": "2026-11-10T20:39:21.510696",
-  "usuario": { "id": 1, "nome": "Administrador" },
-  "quiz_palavras": [
-    { "id": 2, "acertou": null, "respondido_em": null, "palavra": { "id": 31, "palavra": "Verde" } },
-    { "id": 3, "acertou": null, "respondido_em": null, "palavra": { "id": 32, "palavra": "Rosa" } }
-  ]
-}
-```
-
-### Usuários
-
-| Método | Rota | Entrada | Resposta |
-|---|---|---|---|
-| GET | `/usuarios` | – | 200, lista de `{"id", "nome", "email", "criado_em"}` |
-| GET | `/usuarios/{id}` | – | 200, ou 404 |
-| POST | `/usuarios` | `{"nome", "email", "senha"}`, todos obrigatórios | 201, ou 409 se o e-mail já estiver em uso |
-| PATCH | `/usuarios/{id}` | `{"nome"?, "email"?, "senha"?}` | 200, 404 ou 409 |
-| DELETE | `/usuarios/{id}` | – | 204, 404, ou **409** se o usuário criou categorias ou palavras ou jogou quizzes |
-
-Regras:
-- **Senha**: de 6 a 20 caracteres, com pelo menos 1 letra maiúscula, 1 minúscula e 1 número ou símbolo
-  (mesma regra do projeto original). É gravada com hash **BCrypt** e nunca aparece nas respostas.
-- **E-mail**: gravado em minúsculas e sem espaços; não pode se repetir, sem diferenciar maiúsculas
-  e minúsculas.
-- Ainda não há login, como no projeto original: todas as operações são feitas em nome do usuário
-  padrão (id 1). Essa regra fica isolada na interface `UsuarioLogadoProvider`, que pode ser trocada
-  por uma implementação com autenticação sem alterar os services.
-
-### Diferenças em relação à API original (NestJS)
-
-| Original | Esta versão | Motivo |
-|---|---|---|
-| Respostas envelopadas (`{"message", "category"}`) | Corpo é o próprio recurso | Padrão REST; o status HTTP já informa o resultado |
-| `POST` devolve 200 (padrão do NestJS) | 201 + `Location` | Semântica HTTP de criação |
-| `DELETE` devolve 200 com mensagem | 204 sem corpo | Semântica HTTP de exclusão |
-| `PATCH /categorias/{id}` exigia todos os campos | Atualização parcial | Era o comportamento esperado do PATCH (o DTO parcial existia, mas não era usado) |
-| Erros no formato padrão do NestJS | Formato único com `campos` por campo | Facilita mostrar os erros no app |
-| Campo `categoryIds` (camelCase) em palavras | `categoria_ids` | Mesmo padrão `snake_case` dos demais campos |
-| `excluir=1,abc` ignorava silenciosamente o valor inválido | 400 com mensagem | Erros de entrada não passam despercebidos |
-| `quantidade` sem limite | De 1 a 20 | Evita consultas grandes demais |
-| Excluir palavra já usada em quiz gerava erro 500 (violação de FK) | 409 com mensagem clara | Erro tratado como regra de negócio |
-| `POST /quizzes?categoriaIds=1,2` (query string) | `POST /quizzes` com corpo `{"categoria_ids": [1, 2]}` | Dados de criação vão no corpo da requisição |
-| Quiz podia repetir uma palavra que estivesse em duas categorias escolhidas | Palavras sempre distintas | Correção do sorteio (subconsulta em vez de `JOIN`) |
-| Categorias sem palavras: 404 | 422 | As categorias existem; o que falha é a regra de negócio |
-| Uma palavra do quiz podia ser respondida várias vezes | 409 na segunda resposta | Preserva a primeira resposta do jogador |
-| Itens do quiz incluíam as categorias de cada palavra; `GET /quizzes` trazia o e-mail do usuário | Apenas `id` e `palavra`; usuário só com `id` e `nome` | Respostas menores e sem dados pessoais desnecessários |
-| Senha gravada em texto puro (`varchar(20)`) | Hash BCrypt | Segurança: a senha original nunca é armazenada |
-| E-mail único diferenciava maiúsculas e minúsculas | E-mail normalizado em minúsculas | Evita contas duplicadas como `Ana@x.com` e `ana@x.com` |
-| Trocar o e-mail para o próprio e-mail atual dava 409 | Permitido | A verificação ignora o próprio usuário |
-| Excluir usuário com registros gerava erro 500 (FK) | 409 com mensagem clara | Erro tratado como regra de negócio |
-
-## Modelo de dados
-
-O esquema é versionado pelo Flyway em `backend/src/main/resources/db/migration` e segue a modelagem
-do projeto original.
-
-```mermaid
-erDiagram
-    usuarios ||--o{ categorias : "cria / atualiza"
-    usuarios ||--o{ palavras : "cria / atualiza"
-    usuarios ||--o{ quizzes : joga
-    palavras }o--o{ categorias : "palavras_categorias"
-    quizzes ||--|{ quiz_palavras : contem
-    palavras ||--o{ quiz_palavras : "sorteada em"
-
-    usuarios {
-        bigint id PK
-        varchar nome
-        varchar email UK
-        varchar senha "hash BCrypt"
-        timestamp criado_em
-    }
-    categorias {
-        bigint id PK
-        varchar nome
-        varchar descricao
-        bigint criado_por FK
-        bigint atualizado_por FK
-        timestamp criado_em
-        timestamp atualizado_em
-    }
-    palavras {
-        bigint id PK
-        varchar palavra
-        bigint criado_por FK
-        bigint atualizado_por FK
-        timestamp criado_em
-        timestamp atualizado_em
-    }
-    quizzes {
-        bigint id PK
-        bigint id_usuario FK
-        timestamp criado_em
-    }
-    quiz_palavras {
-        bigint id PK
-        bigint id_quiz FK
-        bigint id_palavra FK
-        boolean acertou "null = não respondida"
-        timestamp respondido_em
-    }
-```
-
-Regras de integridade:
-- Ao excluir uma palavra ou uma categoria, os vínculos em `palavras_categorias` são removidos em cascata.
-- Uma palavra que já apareceu em algum quiz não pode ser excluída (`ON DELETE RESTRICT` em `quiz_palavras`).
-- Ao excluir um quiz, os itens dele (`quiz_palavras`) também são excluídos.
-
-| Migration | Conteúdo |
-|---|---|
-| `V1__schema_inicial.sql` | Tabelas, chaves estrangeiras e índices |
-| `V2__dados_iniciais.sql` | Usuário padrão, 6 categorias e 44 palavras |
-
-**Dados iniciais:**
-- Usuário padrão (id 1): `admin@sinalize.com.br` / `Sinalize123`. Como no projeto original, ainda não há
-  login: todas as operações são registradas em nome desse usuário.
-- Categorias: Saudações, Família, Cores, Animais, Alimentos e Lugares, com 6 a 9 palavras cada.
-  "Laranja" está em duas categorias (Cores e Alimentos).
-
-## Estrutura do repositório
-
-```
-sinalize-mobile/
-├── docker-compose.yml   # PostgreSQL 16 para desenvolvimento
-├── backend/             # API REST em Spring Boot
-│   ├── mvnw, mvnw.cmd   # Maven Wrapper
-│   ├── pom.xml
-│   ├── requests.http    # requisições de exemplo
-│   └── src/
-│       ├── main/java/br/com/sinalize/api/
-│       │   ├── controller/   # endpoints REST (só HTTP: status, rotas, validação de entrada)
-│       │   ├── service/      # regras de negócio e transações
-│       │   ├── repository/   # repositórios Spring Data JPA
-│       │   ├── entity/       # entidades JPA
-│       │   ├── dto/          # records de entrada (Request) e saída (Response)
-│       │   ├── exception/    # exceções de negócio e GlobalExceptionHandler
-│       │   ├── validation/   # validações customizadas (Bean Validation)
-│       │   └── config/       # beans de configuração (BCrypt)
-│       ├── main/resources/
-│       │   ├── application.yml
-│       │   └── db/migration/ # scripts do Flyway
-│       └── test/
-│           ├── java/.../controller/  # testes de controller (MockMvc)
-│           ├── java/.../service/     # testes de service (Mockito)
-│           ├── java/.../SinalizeApiIT.java   # testes de integração (PostgreSQL real)
-│           └── resources/application-it.yml  # perfil dos testes de integração
-└── android/             # app Android (Jetpack Compose)
-```
+[Repositório Back-end original (NestJS)](https://github.com/paoli2004/sinalize-back)

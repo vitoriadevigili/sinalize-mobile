@@ -155,6 +155,57 @@ class SinalizeApiIT {
     }
 
     @Test
+    void nomesRepetidosSaoRecusados() throws Exception {
+        long alimentos = idDaCategoria("Alimentos");
+
+        json(post("/palavras").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"palavra\": \"Kiwi\", \"categoria_ids\": [" + alimentos + "]}"), 201);
+
+        // mesma palavra com outra caixa e espaços nas pontas
+        mockMvc.perform(post("/palavras").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"palavra\": \" kiwi \", \"categoria_ids\": [" + alimentos + "]}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe uma palavra com esse nome."));
+
+        // renomear outra palavra para um texto que já existe
+        long banana = jdbc.queryForObject("SELECT id FROM palavras WHERE palavra = 'Banana'", Long.class);
+        mockMvc.perform(patch("/palavras/" + banana).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"palavra\": \"KIWI\"}"))
+                .andExpect(status().isConflict());
+
+        // mudar só as maiúsculas da própria palavra continua permitido
+        mockMvc.perform(patch("/palavras/" + banana).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"palavra\": \"BANANA\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.palavra").value("BANANA"));
+
+        // categorias seguem a mesma regra
+        mockMvc.perform(post("/categorias").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"nome\": \" cores \", \"descricao\": \"Repetida.\"}"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe uma categoria com esse nome."));
+    }
+
+    @Test
+    void categoriaComPalavrasNaoPodeSerExcluida() throws Exception {
+        long animais = idDaCategoria("Animais");
+
+        mockMvc.perform(delete("/categorias/" + animais))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(
+                        "Esta categoria possui palavras vinculadas. Remova-as ou mude-as de categoria antes de excluir."));
+
+        Integer vinculos = jdbc.queryForObject(
+                "SELECT count(*) FROM palavras_categorias WHERE categoria_id = ?", Integer.class, animais);
+        assertThat(vinculos).isEqualTo(7);
+
+        // uma categoria vazia continua podendo ser excluída
+        JsonNode vazia = json(post("/categorias").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"nome\": \"Esportes\", \"descricao\": \"Modalidades esportivas.\"}"), 201);
+        mockMvc.perform(delete("/categorias/" + vazia.get("id").asLong())).andExpect(status().isNoContent());
+    }
+
+    @Test
     void usuarioTemSenhaGuardadaComoHashENuncaDevolvida() throws Exception {
         JsonNode criado = json(post("/usuarios").contentType(MediaType.APPLICATION_JSON)
                 .content("""

@@ -15,4 +15,10 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     @EntityGraph(attributePaths = {"criadoPor", "atualizadoPor"})
     Optional<Categoria> findDetalhadaById(Long id);
+
+    /** Verifica se já existe uma categoria com o mesmo nome, sem diferenciar maiúsculas e minúsculas. */
+    boolean existsByNomeIgnoreCase(String nome);
+
+    /** Igual a {@link #existsByNomeIgnoreCase}, mas ignora a própria categoria (usado na atualização). */
+    boolean existsByNomeIgnoreCaseAndIdNot(String nome, Long id);
 }

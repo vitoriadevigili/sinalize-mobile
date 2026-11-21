@@ -45,7 +45,19 @@ Content-Type: application/json
   "nome": "Saudações e cortesia"
 }
 
-### Excluir categoria (204). Ajuste o id para o da categoria criada acima.
+### Criar categoria com nome já existente (409). Não diferencia maiúsculas nem espaços nas pontas.
+POST {{baseUrl}}/categorias
+Content-Type: application/json
+
+{
+  "nome": "  cores ",
+  "descricao": "Categoria repetida."
+}
+
+### Excluir categoria com palavras vinculadas (409). A categoria 3 (Cores) tem palavras.
+DELETE {{baseUrl}}/categorias/3
+
+### Excluir categoria sem palavras (204). Ajuste o id para o da categoria criada acima.
 DELETE {{baseUrl}}/categorias/7
 
 ###############################################################################
@@ -76,12 +88,21 @@ Content-Type: application/json
   "categoria_ids": [3]
 }
 
+### Criar palavra repetida (409). " lilás " é a mesma palavra que "Lilás", criada acima.
+POST {{baseUrl}}/palavras
+Content-Type: application/json
+
+{
+  "palavra": " lilás ",
+  "categoria_ids": [3]
+}
+
 ### Criar palavra com categoria inexistente (404)
 POST {{baseUrl}}/palavras
 Content-Type: application/json
 
 {
-  "palavra": "Lilás",
+  "palavra": "Cinza",
   "categoria_ids": [3, 9999]
 }
 
@@ -100,6 +121,14 @@ Content-Type: application/json
 
 {
   "categoria_ids": [3, 5]
+}
+
+### Renomear para uma palavra que já existe (409). Ajuste o id para o da palavra criada.
+PATCH {{baseUrl}}/palavras/45
+Content-Type: application/json
+
+{
+  "palavra": "AZUL"
 }
 
 ### Excluir palavra (204). Palavras já usadas em quiz devolvem 409.

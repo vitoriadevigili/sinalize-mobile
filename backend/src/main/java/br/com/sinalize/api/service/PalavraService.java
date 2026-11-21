@@ -23,6 +23,7 @@ public class PalavraService {
     static final String PALAVRA_NAO_ENCONTRADA = "Palavra não encontrada.";
     static final String PALAVRA_USADA_EM_QUIZ =
             "A palavra não pode ser excluída porque já foi usada em um quiz.";
+    static final String PALAVRA_DUPLICADA = "Já existe uma palavra com esse nome.";
 
     private final PalavraRepository palavraRepository;
     private final QuizPalavraRepository quizPalavraRepository;
@@ -68,9 +69,13 @@ public class PalavraService {
 
     @Transactional
     public PalavraResponse criar(PalavraRequest request) {
+        String texto = request.palavra().trim();
+        if (palavraRepository.existsByPalavraIgnoreCase(texto)) {
+            throw new ConflitoException(PALAVRA_DUPLICADA);
+        }
         List<Categoria> categorias = categoriaService.buscarEntidadesPorIds(request.categoriaIds());
 
-        Palavra palavra = new Palavra(request.palavra().trim(), categorias, usuarioLogado.obter());
+        Palavra palavra = new Palavra(texto, categorias, usuarioLogado.obter());
 
         return PalavraResponse.from(palavraRepository.save(palavra));
     }
@@ -80,7 +85,11 @@ public class PalavraService {
         Palavra palavra = buscarEntidade(id);
 
         if (request.palavra() != null) {
-            palavra.setPalavra(request.palavra().trim());
+            String texto = request.palavra().trim();
+            if (palavraRepository.existsByPalavraIgnoreCaseAndIdNot(texto, id)) {
+                throw new ConflitoException(PALAVRA_DUPLICADA);
+            }
+            palavra.setPalavra(texto);
         }
         if (request.categoriaIds() != null) {
             palavra.substituirCategorias(categoriaService.buscarEntidadesPorIds(request.categoriaIds()));

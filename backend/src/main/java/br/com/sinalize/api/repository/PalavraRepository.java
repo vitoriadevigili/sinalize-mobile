@@ -19,6 +19,15 @@ public interface PalavraRepository extends JpaRepository<Palavra, Long> {
     @EntityGraph(attributePaths = {"categorias", "criadoPor", "atualizadoPor"})
     Optional<Palavra> findDetalhadaById(Long id);
 
+    /** Verifica se já existe uma palavra com o mesmo texto, sem diferenciar maiúsculas e minúsculas. */
+    boolean existsByPalavraIgnoreCase(String palavra);
+
+    /** Igual a {@link #existsByPalavraIgnoreCase}, mas ignora a própria palavra (usado na atualização). */
+    boolean existsByPalavraIgnoreCaseAndIdNot(String palavra, Long id);
+
+    /** Indica se alguma palavra está vinculada à categoria. */
+    boolean existsByCategorias_Id(Long categoriaId);
+
     /**
      * Sorteia palavras que pertencem a pelo menos uma das categorias informadas.
      * A subconsulta evita repetir a mesma palavra quando ela está em mais de uma categoria.

@@ -127,6 +127,41 @@ class PalavraServiceTest {
     }
 
     @Test
+    void criarComPalavraRepetidaLancaConflitoSemSalvar() {
+        when(palavraRepository.existsByPalavraIgnoreCase("uva")).thenReturn(true);
+
+        assertThatThrownBy(() -> palavraService.criar(new PalavraRequest(" uva ", List.of(5L))))
+                .isInstanceOf(ConflitoException.class)
+                .hasMessage("Já existe uma palavra com esse nome.");
+        verify(palavraRepository, never()).save(any());
+        verify(categoriaService, never()).buscarEntidadesPorIds(any());
+    }
+
+    @Test
+    void atualizarParaTextoDeOutraPalavraLancaConflito() {
+        Palavra laranja = palavra(10L, "Laranja", cores);
+        when(palavraRepository.findDetalhadaById(10L)).thenReturn(Optional.of(laranja));
+        when(palavraRepository.existsByPalavraIgnoreCaseAndIdNot("Banana", 10L)).thenReturn(true);
+
+        assertThatThrownBy(() -> palavraService.atualizar(10L, new PalavraAtualizacaoRequest(" Banana ", null)))
+                .isInstanceOf(ConflitoException.class)
+                .hasMessage("Já existe uma palavra com esse nome.");
+        assertThat(laranja.getPalavra()).isEqualTo("Laranja");
+    }
+
+    @Test
+    void atualizarMudandoSoAsMaiusculasDaPropriaPalavraEhPermitido() {
+        Palavra laranja = palavra(10L, "Laranja", cores);
+        when(palavraRepository.findDetalhadaById(10L)).thenReturn(Optional.of(laranja));
+        when(palavraRepository.existsByPalavraIgnoreCaseAndIdNot("LARANJA", 10L)).thenReturn(false);
+        when(usuarioLogado.obter()).thenReturn(admin);
+
+        PalavraResponse resposta = palavraService.atualizar(10L, new PalavraAtualizacaoRequest("LARANJA", null));
+
+        assertThat(resposta.palavra()).isEqualTo("LARANJA");
+    }
+
+    @Test
     void excluirPalavraUsadaEmQuizLancaConflito() {
         when(palavraRepository.existsById(4L)).thenReturn(true);
         when(quizPalavraRepository.existsByPalavraId(4L)).thenReturn(true);

@@ -4,6 +4,7 @@ import br.com.sinalize.api.dto.categoria.CategoriaAtualizacaoRequest;
 import br.com.sinalize.api.dto.categoria.CategoriaRequest;
 import br.com.sinalize.api.dto.categoria.CategoriaResponse;
 import br.com.sinalize.api.dto.usuario.UsuarioResumoResponse;
+import br.com.sinalize.api.exception.ConflitoException;
 import br.com.sinalize.api.exception.RecursoNaoEncontradoException;
 import br.com.sinalize.api.service.CategoriaService;
 import org.junit.jupiter.api.Test;
@@ -179,6 +180,48 @@ class CategoriaControllerTest {
 
         mockMvc.perform(delete("/categorias/99"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void excluirCategoriaComPalavrasDevolve409() throws Exception {
+        String mensagem = "Esta categoria possui palavras vinculadas. "
+                + "Remova-as ou mude-as de categoria antes de excluir.";
+        doThrow(new ConflitoException(mensagem)).when(categoriaService).excluir(3L);
+
+        mockMvc.perform(delete("/categorias/3"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message").value(mensagem))
+                .andExpect(jsonPath("$.path").value("/categorias/3"));
+    }
+
+    @Test
+    void criarComNomeRepetidoDevolve409() throws Exception {
+        when(categoriaService.criar(any(CategoriaRequest.class)))
+                .thenThrow(new ConflitoException("Já existe uma categoria com esse nome."));
+
+        mockMvc.perform(post("/categorias")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nome": "cores", "descricao": "Outra descrição."}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe uma categoria com esse nome."));
+    }
+
+    @Test
+    void atualizarParaNomeRepetidoDevolve409() throws Exception {
+        when(categoriaService.atualizar(eq(3L), any()))
+                .thenThrow(new ConflitoException("Já existe uma categoria com esse nome."));
+
+        mockMvc.perform(patch("/categorias/3")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"nome": "Animais"}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Já existe uma categoria com esse nome."));
     }
 
     @Test

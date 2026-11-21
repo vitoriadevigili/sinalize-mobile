@@ -4,8 +4,10 @@ import br.com.sinalize.api.dto.categoria.CategoriaAtualizacaoRequest;
 import br.com.sinalize.api.dto.categoria.CategoriaRequest;
 import br.com.sinalize.api.dto.categoria.CategoriaResponse;
 import br.com.sinalize.api.entity.Categoria;
+import br.com.sinalize.api.exception.ConflitoException;
 import br.com.sinalize.api.exception.RecursoNaoEncontradoException;
 import br.com.sinalize.api.repository.CategoriaRepository;
+import br.com.sinalize.api.repository.PalavraRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +25,19 @@ import java.util.stream.Collectors;
 public class CategoriaService {
 
     static final String CATEGORIA_NAO_ENCONTRADA = "Categoria não encontrada.";
+    static final String CATEGORIA_DUPLICADA = "Já existe uma categoria com esse nome.";
+    static final String CATEGORIA_COM_PALAVRAS =
+            "Esta categoria possui palavras vinculadas. Remova-as ou mude-as de categoria antes de excluir.";
 
     private final CategoriaRepository categoriaRepository;
+    private final PalavraRepository palavraRepository;
     private final UsuarioLogadoProvider usuarioLogado;
 
-    public CategoriaService(CategoriaRepository categoriaRepository, UsuarioLogadoProvider usuarioLogado) {
+    public CategoriaService(CategoriaRepository categoriaRepository,
+                            PalavraRepository palavraRepository,
+                            UsuarioLogadoProvider usuarioLogado) {
         this.categoriaRepository = categoriaRepository;
+        this.palavraRepository = palavraRepository;
         this.usuarioLogado = usuarioLogado;
     }
 
@@ -44,8 +53,12 @@ public class CategoriaService {
 
     @Transactional
     public CategoriaResponse criar(CategoriaRequest request) {
+        String nome = request.nome().trim();
+        if (categoriaRepository.existsByNomeIgnoreCase(nome)) {
+            throw new ConflitoException(CATEGORIA_DUPLICADA);
+        }
         Categoria categoria = new Categoria(
-                request.nome().trim(),
+                nome,
                 request.descricao().trim(),
                 usuarioLogado.obter());
         return CategoriaResponse.from(categoriaRepository.save(categoria));
@@ -56,7 +69,11 @@ public class CategoriaService {
         Categoria categoria = buscarEntidade(id);
 
         if (request.nome() != null) {
-            categoria.setNome(request.nome().trim());
+            String nome = request.nome().trim();
+            if (categoriaRepository.existsByNomeIgnoreCaseAndIdNot(nome, id)) {
+                throw new ConflitoException(CATEGORIA_DUPLICADA);
+            }
+            categoria.setNome(nome);
         }
         if (request.descricao() != null) {
             categoria.setDescricao(request.descricao().trim());
@@ -66,11 +83,17 @@ public class CategoriaService {
         return CategoriaResponse.from(categoria);
     }
 
-    /** Exclui a categoria; os vínculos com palavras são removidos em cascata pelo banco. */
+    /**
+     * Exclui a categoria. Categorias com palavras vinculadas são mantidas: excluí-las
+     * poderia deixar palavras sem nenhuma categoria, o que a regra de palavras não permite.
+     */
     @Transactional
     public void excluir(Long id) {
         if (!categoriaRepository.existsById(id)) {
             throw new RecursoNaoEncontradoException(CATEGORIA_NAO_ENCONTRADA);
+        }
+        if (palavraRepository.existsByCategorias_Id(id)) {
+            throw new ConflitoException(CATEGORIA_COM_PALAVRAS);
         }
         categoriaRepository.deleteById(id);
     }
