@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-/** Corpo de {@code POST /palavras}. */
 public record PalavraRequest(
 
         @NotBlank(message = "O campo palavra é obrigatório.")
@@ -15,5 +14,5 @@ public record PalavraRequest(
         String palavra,
 
         @NotEmpty(message = "A palavra deve estar associada a pelo menos uma categoria.")
-        List<@NotNull(message = "O campo categoria_ids não pode conter valores nulos.") Long> categoriaIds) {
+        List<@NotNull(message = "A lista de categorias não pode conter valores nulos.") Long> categoriaIds) {
 }

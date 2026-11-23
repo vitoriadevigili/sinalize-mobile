@@ -22,7 +22,7 @@ public class PalavraService {
 
     static final String PALAVRA_NAO_ENCONTRADA = "Palavra não encontrada.";
     static final String PALAVRA_USADA_EM_QUIZ =
-            "A palavra não pode ser excluída porque já foi usada em um quiz.";
+            "Não é possível excluir a palavra: ela já foi usada em um quiz.";
     static final String PALAVRA_DUPLICADA = "Já existe uma palavra com esse nome.";
 
     private final PalavraRepository palavraRepository;
@@ -50,13 +50,6 @@ public class PalavraService {
         return PalavraResponse.from(buscarEntidade(id));
     }
 
-    /**
-     * Sorteia palavras de qualquer categoria. É usado para montar as alternativas
-     * erradas do quiz, excluindo a palavra correta.
-     *
-     * @param excluir    ids que não podem ser sorteados (pode ser vazio)
-     * @param quantidade número máximo de palavras devolvidas
-     */
     public List<PalavraResumoResponse> sortearAleatorias(Collection<Long> excluir, int quantidade) {
         List<Palavra> sorteadas = excluir.isEmpty()
                 ? palavraRepository.sortear(quantidade)
@@ -99,10 +92,6 @@ public class PalavraService {
         return PalavraResponse.from(palavra);
     }
 
-    /**
-     * Exclui a palavra. Palavras que já apareceram em algum quiz são mantidas para
-     * preservar o histórico de respostas.
-     */
     @Transactional
     public void excluir(Long id) {
         if (!palavraRepository.existsById(id)) {

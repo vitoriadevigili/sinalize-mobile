@@ -14,7 +14,6 @@ import org.hibernate.Hibernate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-/** Uma palavra sorteada para um quiz, com a resposta do jogador. */
 @Entity
 @Table(name = "quiz_palavras")
 public class QuizPalavra {
@@ -31,7 +30,6 @@ public class QuizPalavra {
     @JoinColumn(name = "id_palavra", nullable = false, updatable = false)
     private Palavra palavra;
 
-    /** {@code null} enquanto a palavra não foi respondida. */
     @Column(name = "acertou")
     private Boolean acertou;
 
@@ -39,7 +37,6 @@ public class QuizPalavra {
     private LocalDateTime respondidoEm;
 
     protected QuizPalavra() {
-        // exigido pelo JPA
     }
 
     QuizPalavra(Quiz quiz, Palavra palavra) {
@@ -47,7 +44,6 @@ public class QuizPalavra {
         this.palavra = palavra;
     }
 
-    /** Registra a resposta do jogador. Responder de novo sobrescreve a resposta anterior. */
     public void responder(boolean acertou) {
         this.acertou = acertou;
         this.respondidoEm = LocalDateTime.now();

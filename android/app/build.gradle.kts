@@ -19,11 +19,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Endereço da API. Padrão: o computador visto de dentro do emulador (10.0.2.2).
-        // Para celular físico, use o IP do computador na rede: gradlew installDebug -PsinalizeApiUrl=http://192.168.0.10:8080/
         val apiUrl = (project.findProperty("sinalizeApiUrl") as String?) ?: "http://10.0.2.2:8080/"
         buildConfigField("String", "API_BASE_URL", "\"$apiUrl\"")
-        // true = usa os dados ilustrativos em memória, sem precisar do back-end: -PsinalizeDadosIlustrativos=true
         val ilustrativos = (project.findProperty("sinalizeDadosIlustrativos") as String?)?.toBoolean() ?: false
         buildConfigField("boolean", "USAR_DADOS_ILUSTRATIVOS", ilustrativos.toString())
     }

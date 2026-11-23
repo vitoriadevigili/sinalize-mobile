@@ -3,15 +3,7 @@ package br.com.sinalize.data.remote
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/*
- * Formato do JSON da API (backend/src/main/java/br/com/sinalize/api/dto), que usa snake_case.
- * As datas chegam como texto ISO (ex.: "2026-11-21T19:30:00"); o app só as repassa.
- *
- * Atenção: o back-end recusa campos desconhecidos (fail-on-unknown-properties), então os
- * DTOs de envio (Request) têm exatamente os campos esperados.
- */
 
-// ---- Respostas ----
 
 @Serializable
 data class UsuarioResumoDto(
@@ -69,7 +61,6 @@ data class QuizDto(
     @SerialName("quiz_palavras") val quizPalavras: List<QuizPalavraDto> = emptyList(),
 )
 
-/** Corpo padrão dos erros da API (ErrorResponse.java). */
 @Serializable
 data class ErroDto(
     val status: Int? = null,
@@ -85,7 +76,6 @@ data class CampoErroDto(
     val mensagem: String,
 )
 
-// ---- Envios ----
 
 @Serializable
 data class CategoriaRequestDto(

@@ -25,7 +25,6 @@ public class Categoria extends EntidadeAuditavel {
     private String descricao;
 
     protected Categoria() {
-        // exigido pelo JPA
     }
 
     public Categoria(String nome, String descricao, Usuario criadoPor) {

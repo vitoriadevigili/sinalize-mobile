@@ -12,13 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-/*
- * Implementações em memória dos repositórios, com dados ilustrativos.
- * As alterações (criar, editar, excluir) valem enquanto o app estiver aberto.
- * O pequeno atraso imita o tempo de resposta da rede, para os estados de carregamento aparecerem.
- */
 
-/** Estado compartilhado entre os repositórios falsos (palavras referenciam categorias). */
 class BancoEmMemoria(
     categorias: List<Categoria> = DadosIlustrativos.categorias,
     palavras: List<Palavra> = DadosIlustrativos.palavras,
@@ -58,7 +52,6 @@ class FakeCategoriaRepository(
             ?: return Result.failure(NoSuchElementException("Categoria não encontrada."))
         val editada = atual.copy(nome = nome.trim(), descricao = descricao.trim())
         banco.categorias.update { lista -> lista.map { if (it.id == id) editada else it } }
-        // Mantém o resumo da categoria atualizado nas palavras que a usam.
         banco.palavras.update { lista ->
             lista.map { p -> p.copy(categorias = p.categorias.map { if (it.id == id) editada.resumo() else it }) }
         }

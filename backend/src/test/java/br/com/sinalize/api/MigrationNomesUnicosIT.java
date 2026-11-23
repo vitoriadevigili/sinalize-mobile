@@ -14,13 +14,6 @@ import java.util.Objects;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Testa a migration {@code V3__nomes_unicos.sql} partindo de um banco que já tem nomes repetidos
- * (situação de quem usou a API antes desta versão).
- *
- * <p>Roda sem o Spring, num schema próprio ({@code it_v3}), para não interferir no schema
- * {@code it} usado pelos demais testes de integração. Pré-requisito: {@code docker compose up -d}.</p>
- */
 class MigrationNomesUnicosIT {
 
     private static final String SCHEMA = "it_v3";
@@ -48,7 +41,6 @@ class MigrationNomesUnicosIT {
 
     @Test
     void unePalavrasECategoriasRepetidasECriaOsIndicesUnicos() {
-        // Duplicatas criadas antes da V3: " uva " (mais antiga) e "UVA", e a categoria "cores " repetida.
         long frutas = inserir("INSERT INTO " + SCHEMA + ".categorias (nome, descricao, criado_por) "
                 + "VALUES ('Frutas', 'd', 1) RETURNING id");
         long coresRepetida = inserir("INSERT INTO " + SCHEMA + ".categorias (nome, descricao, criado_por) "
@@ -67,13 +59,11 @@ class MigrationNomesUnicosIT {
                 + "VALUES ('Lilás', 1) RETURNING id");
         vincular(lilas, coresRepetida);
 
-        // a palavra repetida já foi usada em um quiz (FK RESTRICT)
         long quiz = inserir("INSERT INTO " + SCHEMA + ".quizzes (id_usuario) VALUES (1) RETURNING id");
         jdbc.update("INSERT INTO " + SCHEMA + ".quiz_palavras (id_quiz, id_palavra) VALUES (?, ?)", quiz, uvaNova);
 
         flyway(null).migrate();
 
-        // fica só a "uva" mais antiga, sem espaços, com as categorias das duas e a resposta do quiz
         assertThat(jdbc.queryForList("SELECT id FROM " + SCHEMA + ".palavras WHERE lower(trim(palavra)) = 'uva'",
                 Long.class)).containsExactly(uvaAntiga);
         assertThat(jdbc.queryForObject("SELECT palavra FROM " + SCHEMA + ".palavras WHERE id = ?",
@@ -82,12 +72,10 @@ class MigrationNomesUnicosIT {
         assertThat(jdbc.queryForObject("SELECT id_palavra FROM " + SCHEMA + ".quiz_palavras WHERE id_quiz = ?",
                 Long.class, quiz)).isEqualTo(uvaAntiga);
 
-        // a categoria repetida some e a palavra dela passa para a "Cores" original
         assertThat(jdbc.queryForObject("SELECT count(*) FROM " + SCHEMA + ".categorias WHERE id = ?",
                 Integer.class, coresRepetida)).isZero();
         assertThat(categoriasDa(lilas)).containsExactly(cores);
 
-        // os índices únicos passam a barrar novas repetições
         assertThatThrownBy(() -> jdbc.update(
                 "INSERT INTO " + SCHEMA + ".palavras (palavra, criado_por) VALUES (' Uva', 1)"))
                 .isInstanceOf(DuplicateKeyException.class);
@@ -112,7 +100,6 @@ class MigrationNomesUnicosIT {
                 .isEqualTo(6);
     }
 
-    /** Flyway no schema de teste; {@code alvo} limita a versão aplicada (null = todas). */
     private Flyway flyway(String alvo) {
         var configuracao = Flyway.configure()
                 .dataSource(dataSource)

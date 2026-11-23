@@ -45,7 +45,6 @@ class QuizViewModelTest {
         vm.comecar()
         advanceUntilIdle()
 
-        // Avatar ainda carregando: continua em "Preparando o seu quiz..." e avisa que está esperando.
         assertEquals(FaseQuiz.SELECIONANDO, vm.uiState.value.fase)
         assertTrue(vm.uiState.value.preparando)
         assertTrue(vm.uiState.value.aguardandoAvatar)

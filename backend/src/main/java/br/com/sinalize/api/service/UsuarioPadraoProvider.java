@@ -5,7 +5,6 @@ import br.com.sinalize.api.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-/** Implementação sem autenticação: considera sempre o usuário padrão como logado. */
 @Component
 public class UsuarioPadraoProvider implements UsuarioLogadoProvider {
 

@@ -8,7 +8,6 @@ import br.com.sinalize.data.model.Quiz
 import br.com.sinalize.data.model.QuizPalavra
 import br.com.sinalize.data.model.UsuarioResumo
 
-/* Conversão do JSON da API (DTOs) para os modelos que as telas usam. */
 
 fun UsuarioResumoDto.paraModelo() = UsuarioResumo(id = id, nome = nome)
 

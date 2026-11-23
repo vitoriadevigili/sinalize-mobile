@@ -25,15 +25,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Converte as exceções da aplicação em respostas HTTP com o corpo padronizado {@link ErrorResponse}.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /** Converte nomes Java (categoriaIds) para o formato usado no JSON (categoria_ids). */
     private static final PropertyNamingStrategies.SnakeCaseStrategy SNAKE_CASE =
             new PropertyNamingStrategies.SnakeCaseStrategy();
 
@@ -55,7 +51,6 @@ public class GlobalExceptionHandler {
         return responder(HttpStatus.UNPROCESSABLE_ENTITY, ex.getMessage(), request);
     }
 
-    /** Erros de Bean Validation no corpo da requisição (@Valid @RequestBody). */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidacaoCorpo(MethodArgumentNotValidException ex,
                                                               HttpServletRequest request) {
@@ -67,7 +62,6 @@ public class GlobalExceptionHandler {
         return responder(HttpStatus.BAD_REQUEST, MENSAGEM_DADOS_INVALIDOS, request, campos);
     }
 
-    /** Erros de validação em parâmetros de rota ou de query (@Min, @Max etc. nos métodos do controller). */
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidacaoParametros(HandlerMethodValidationException ex,
                                                                    HttpServletRequest request) {
@@ -80,7 +74,6 @@ public class GlobalExceptionHandler {
         return responder(HttpStatus.BAD_REQUEST, MENSAGEM_DADOS_INVALIDOS, request, campos);
     }
 
-    /** JSON malformado, campo desconhecido ou valor de tipo errado no corpo. */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleCorpoIlegivel(HttpMessageNotReadableException ex,
                                                             HttpServletRequest request) {
@@ -93,10 +86,6 @@ public class GlobalExceptionHandler {
         return responder(HttpStatus.BAD_REQUEST, mensagem, request);
     }
 
-    /**
-     * Nome do campo JSON onde ocorreu o erro. Para itens de lista (ex.: {@code categoria_ids[0]}),
-     * o último elemento do caminho é o índice, então usamos o último elemento que tem nome.
-     */
     private static String nomeDoCampo(MismatchedInputException ex) {
         return ex.getPath().stream()
                 .map(JsonMappingException.Reference::getFieldName)
@@ -139,7 +128,6 @@ public class GlobalExceptionHandler {
                 "Tipo de conteúdo não suportado. Use application/json.", request);
     }
 
-    /** Violação de restrição do banco que escapou das validações do serviço. */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleIntegridade(DataIntegrityViolationException ex,
                                                           HttpServletRequest request) {

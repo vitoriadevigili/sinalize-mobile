@@ -74,10 +74,6 @@ public class UsuarioService {
         return UsuarioResponse.from(usuario);
     }
 
-    /**
-     * Exclui o usuário. Quem já criou categorias ou palavras ou jogou quizzes é mantido,
-     * para preservar a autoria e o histórico.
-     */
     @Transactional
     public void excluir(Long id) {
         if (!usuarioRepository.existsById(id)) {
@@ -94,7 +90,6 @@ public class UsuarioService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(USUARIO_NAO_ENCONTRADO));
     }
 
-    /** E-mails são gravados sem espaços e em minúsculas, para a verificação de duplicidade ser confiável. */
     private static String normalizarEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);
     }

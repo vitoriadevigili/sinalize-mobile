@@ -5,11 +5,6 @@ import br.com.sinalize.api.entity.QuizPalavra;
 
 import java.time.LocalDateTime;
 
-/**
- * Uma palavra do quiz.
- *
- * @param acertou {@code null} enquanto a palavra não foi respondida
- */
 public record QuizPalavraResponse(
         Long id,
         Boolean acertou,

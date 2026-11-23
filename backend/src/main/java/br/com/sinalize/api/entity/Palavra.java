@@ -35,7 +35,6 @@ public class Palavra extends EntidadeAuditavel {
     private Set<Categoria> categorias = new HashSet<>();
 
     protected Palavra() {
-        // exigido pelo JPA
     }
 
     public Palavra(String palavra, Collection<Categoria> categorias, Usuario criadoPor) {
@@ -60,7 +59,6 @@ public class Palavra extends EntidadeAuditavel {
         return Set.copyOf(categorias);
     }
 
-    /** Substitui todas as categorias associadas à palavra. */
     public void substituirCategorias(Collection<Categoria> novasCategorias) {
         categorias.clear();
         categorias.addAll(novasCategorias);

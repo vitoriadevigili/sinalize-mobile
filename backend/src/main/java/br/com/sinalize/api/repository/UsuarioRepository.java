@@ -13,13 +13,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByEmailIgnoreCase(String email);
 
-    /** Verifica se o e-mail já pertence a outro usuário (usado na atualização). */
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
-    /**
-     * Indica se o usuário criou categorias ou palavras ou jogou algum quiz.
-     * Nesses casos ele não pode ser excluído (chaves estrangeiras com RESTRICT).
-     */
     @Query("""
             SELECT CASE WHEN
                    EXISTS (SELECT 1 FROM Categoria c WHERE c.criadoPor.id = :id)

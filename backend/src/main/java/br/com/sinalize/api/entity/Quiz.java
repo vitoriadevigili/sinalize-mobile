@@ -37,20 +37,17 @@ public class Quiz {
     @Column(name = "criado_em", nullable = false, updatable = false)
     private LocalDateTime criadoEm;
 
-    /** Palavras sorteadas, na ordem em que serão apresentadas ao jogador. */
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id ASC")
     private List<QuizPalavra> itens = new ArrayList<>();
 
     protected Quiz() {
-        // exigido pelo JPA
     }
 
     public Quiz(Usuario usuario) {
         this.usuario = usuario;
     }
 
-    /** Adiciona uma palavra sorteada ao quiz, mantendo os dois lados da associação. */
     public QuizPalavra adicionarPalavra(Palavra palavra) {
         QuizPalavra item = new QuizPalavra(this, palavra);
         itens.add(item);

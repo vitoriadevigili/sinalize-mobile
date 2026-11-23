@@ -84,7 +84,6 @@ class PalavraServiceTest {
         verify(palavraRepository).save(salva.capture());
         assertThat(salva.getValue().getPalavra()).isEqualTo("Laranja");
         assertThat(salva.getValue().getCriadoPor()).isSameAs(admin);
-        // categorias da resposta saem em ordem alfabética
         assertThat(resposta.categorias()).extracting("nome").containsExactly("Alimentos", "Cores");
     }
 
@@ -168,7 +167,7 @@ class PalavraServiceTest {
 
         assertThatThrownBy(() -> palavraService.excluir(4L))
                 .isInstanceOf(ConflitoException.class)
-                .hasMessage("A palavra não pode ser excluída porque já foi usada em um quiz.");
+                .hasMessage("Não é possível excluir a palavra: ela já foi usada em um quiz.");
         verify(palavraRepository, never()).deleteById(any());
     }
 

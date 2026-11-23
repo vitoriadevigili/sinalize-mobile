@@ -42,7 +42,6 @@
           salvo.state.showSubtitles = false;
           localStorage.setItem(chave, JSON.stringify(salvo));
         } catch (e) {
-          // Sem localStorage o avatar funciona igual, só que com legenda.
         }
       })();
     </script>
@@ -96,7 +95,6 @@
           if (pronto) traduzir(ultimaPalavra);
         };
 
-        // Chamado pelo botão "Repetir" do app: sinaliza a mesma palavra de novo.
         window.repetir = function () {
           if (pronto && ultimaPalavra) traduzir(ultimaPalavra);
         };

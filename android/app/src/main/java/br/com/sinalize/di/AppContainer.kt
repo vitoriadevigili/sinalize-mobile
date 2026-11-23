@@ -15,12 +15,6 @@ import br.com.sinalize.data.repository.PalavraRepository
 import br.com.sinalize.data.repository.QuizRepository
 import br.com.sinalize.vlibras.MotorVLibras
 
-/**
- * Injeção de dependências manual: decide qual implementação as telas usam.
- *
- * Por padrão, os repositórios chamam a API do back-end (BuildConfig.API_BASE_URL).
- * Com -PsinalizeDadosIlustrativos=true na compilação, usam os dados em memória (não precisa do back-end).
- */
 class AppContainer(contexto: Context) {
 
     val categoriaRepository: CategoriaRepository
@@ -42,6 +36,5 @@ class AppContainer(contexto: Context) {
         }
     }
 
-    /** Avatar do VLibras, um só para o app inteiro (começa a carregar quando o app abre). */
     val vlibras = MotorVLibras(contexto.applicationContext)
 }

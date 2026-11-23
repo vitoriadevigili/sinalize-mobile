@@ -29,18 +29,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-/**
- * Testes de integração: aplicação completa (controllers, services, JPA, Flyway) contra o
- * PostgreSQL real do docker-compose, no schema isolado "it".
- *
- * <p>Pré-requisito: {@code docker compose up -d}. Execução: {@code mvnw verify}.</p>
- */
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("it")
 class SinalizeApiIT {
 
-    /** Recria o schema de teste a cada execução, partindo sempre das migrations e da seed. */
     @TestConfiguration
     static class FlywayLimpo {
         @Bean
@@ -81,7 +74,6 @@ class SinalizeApiIT {
         long cores = idDaCategoria("Cores");
         long alimentos = idDaCategoria("Alimentos");
 
-        // 1. cria o quiz
         JsonNode quiz = json(post("/quizzes").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"categoria_ids\": [" + cores + ", " + alimentos + "]}"), 201);
         JsonNode itens = quiz.get("quiz_palavras");
@@ -91,7 +83,6 @@ class SinalizeApiIT {
         itens.forEach(item -> palavrasDoQuiz.add(item.get("palavra").get("id").asLong()));
         assertThat(palavrasDoQuiz).as("palavras distintas").hasSize(5);
 
-        // 2. para cada item: busca alternativas erradas e responde
         List<Boolean> respostas = new ArrayList<>();
         for (JsonNode item : itens) {
             long palavraId = item.get("palavra").get("id").asLong();
@@ -109,7 +100,6 @@ class SinalizeApiIT {
                     .andExpect(jsonPath("$.acertou").value(acertou));
         }
 
-        // 3. o resultado fica gravado no banco
         long quizId = quiz.get("id").asLong();
         Integer acertos = jdbc.queryForObject(
                 "SELECT count(*) FROM quiz_palavras WHERE id_quiz = ? AND acertou", Integer.class, quizId);
@@ -118,14 +108,12 @@ class SinalizeApiIT {
         assertThat(acertos).isEqualTo(3);
         assertThat(semData).isZero();
 
-        // 4. responder de novo e excluir palavra usada são bloqueados
         mockMvc.perform(patch("/quizzes/palavras/" + itens.get(0).get("id").asLong() + "/responder")
                         .contentType(MediaType.APPLICATION_JSON).content("{\"acertou\": true}"))
                 .andExpect(status().isConflict());
         mockMvc.perform(delete("/palavras/" + palavrasDoQuiz.iterator().next()))
                 .andExpect(status().isConflict());
 
-        // 5. o quiz pode ser consultado depois
         mockMvc.perform(get("/quizzes/" + quizId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.quiz_palavras[0].respondido_em").isNotEmpty());
@@ -161,25 +149,21 @@ class SinalizeApiIT {
         json(post("/palavras").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"palavra\": \"Kiwi\", \"categoria_ids\": [" + alimentos + "]}"), 201);
 
-        // mesma palavra com outra caixa e espaços nas pontas
         mockMvc.perform(post("/palavras").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"palavra\": \" kiwi \", \"categoria_ids\": [" + alimentos + "]}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("Já existe uma palavra com esse nome."));
 
-        // renomear outra palavra para um texto que já existe
         long banana = jdbc.queryForObject("SELECT id FROM palavras WHERE palavra = 'Banana'", Long.class);
         mockMvc.perform(patch("/palavras/" + banana).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"palavra\": \"KIWI\"}"))
                 .andExpect(status().isConflict());
 
-        // mudar só as maiúsculas da própria palavra continua permitido
         mockMvc.perform(patch("/palavras/" + banana).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"palavra\": \"BANANA\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.palavra").value("BANANA"));
 
-        // categorias seguem a mesma regra
         mockMvc.perform(post("/categorias").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nome\": \" cores \", \"descricao\": \"Repetida.\"}"))
                 .andExpect(status().isConflict())
@@ -199,7 +183,6 @@ class SinalizeApiIT {
                 "SELECT count(*) FROM palavras_categorias WHERE categoria_id = ?", Integer.class, animais);
         assertThat(vinculos).isEqualTo(7);
 
-        // uma categoria vazia continua podendo ser excluída
         JsonNode vazia = json(post("/categorias").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"nome\": \"Esportes\", \"descricao\": \"Modalidades esportivas.\"}"), 201);
         mockMvc.perform(delete("/categorias/" + vazia.get("id").asLong())).andExpect(status().isNoContent());
@@ -218,17 +201,14 @@ class SinalizeApiIT {
         String hash = jdbc.queryForObject("SELECT senha FROM usuarios WHERE id = ?", String.class, id);
         assertThat(hash).startsWith("$2a$").isNotEqualTo("Senha123");
 
-        // e-mail duplicado, mesmo com maiúsculas diferentes
         mockMvc.perform(post("/usuarios").contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"nome": "Outra", "email": "MARIA.IT@email.com", "senha": "Senha123"}
                                 """))
                 .andExpect(status().isConflict());
 
-        // o usuário padrão tem registros associados e não pode ser excluído
         mockMvc.perform(delete("/usuarios/1")).andExpect(status().isConflict());
 
-        // um usuário sem registros pode
         mockMvc.perform(delete("/usuarios/" + id)).andExpect(status().isNoContent());
     }
 

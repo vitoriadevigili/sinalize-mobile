@@ -9,10 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
-/**
- * Campos de auditoria compartilhados por {@link Categoria} e {@link Palavra}:
- * quem criou e quando, e quem fez a última alteração e quando.
- */
 @MappedSuperclass
 public abstract class EntidadeAuditavel {
 
@@ -38,7 +34,6 @@ public abstract class EntidadeAuditavel {
         this.criadoPor = criadoPor;
     }
 
-    /** Registra quem fez a alteração e quando. Deve ser chamado a cada atualização. */
     public void registrarAtualizacao(Usuario usuario) {
         this.atualizadoPor = usuario;
         this.atualizadoEm = LocalDateTime.now();

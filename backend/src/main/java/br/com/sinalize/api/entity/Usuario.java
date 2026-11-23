@@ -26,7 +26,6 @@ public class Usuario {
     @Column(nullable = false, length = 255, unique = true)
     private String email;
 
-    /** Hash BCrypt da senha; nunca é exposto pela API. */
     @Column(nullable = false, length = 72)
     private String senha;
 
@@ -35,7 +34,6 @@ public class Usuario {
     private LocalDateTime criadoEm;
 
     protected Usuario() {
-        // exigido pelo JPA
     }
 
     public Usuario(String nome, String email, String senhaHash) {

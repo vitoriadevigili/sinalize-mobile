@@ -150,7 +150,7 @@ class QuizControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.campos[0].mensagem").value("O campo acertou é obrigatório."));
+                .andExpect(jsonPath("$.campos[0].mensagem").value("Informe se o jogador acertou."));
 
         verifyNoInteractions(quizService);
     }

@@ -11,10 +11,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Usado em atualizações parciais (PATCH): o campo pode ser omitido ({@code null}),
- * mas, se for enviado, não pode estar em branco.
- */
 @Documented
 @Constraint(validatedBy = NaoVazioSePresente.Validador.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER, ElementType.RECORD_COMPONENT})

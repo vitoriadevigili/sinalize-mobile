@@ -50,7 +50,6 @@ fun PalavraDialog(
     }
     var tentouSalvar by rememberSaveable(chave) { mutableStateOf(false) }
     val invalido = tentouSalvar && texto.isBlank()
-    // O back-end exige pelo menos uma categoria por palavra.
     val semCategoria = tentouSalvar && selecionadas.isEmpty()
 
     AlertDialog(

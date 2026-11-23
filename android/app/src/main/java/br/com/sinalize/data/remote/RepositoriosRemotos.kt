@@ -9,11 +9,6 @@ import br.com.sinalize.data.repository.PalavraRepository
 import br.com.sinalize.data.repository.QuizRepository
 import kotlinx.serialization.json.Json
 
-/*
- * Implementações dos repositórios que chamam a API do back-end.
- * Cada método converte a resposta para os modelos do app e transforma
- * qualquer falha em um ErroApi com mensagem amigável (ver chamarApi).
- */
 
 class RemoteCategoriaRepository(
     private val api: SinalizeApi,

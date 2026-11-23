@@ -40,9 +40,6 @@ public class PalavraController {
         return palavraService.listar();
     }
 
-    /**
-     * Sorteia palavras aleatórias, por exemplo {@code /palavras/aleatorias?excluir=3,8&quantidade=3}.
-     */
     @GetMapping("/aleatorias")
     public List<PalavraResumoResponse> sortearAleatorias(
             @RequestParam(defaultValue = "") List<Long> excluir,

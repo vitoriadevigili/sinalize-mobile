@@ -12,26 +12,18 @@ import java.util.Optional;
 
 public interface PalavraRepository extends JpaRepository<Palavra, Long> {
 
-    /** Lista as palavras já com categorias e autores carregados (evita consultas N+1). */
     @EntityGraph(attributePaths = {"categorias", "criadoPor", "atualizadoPor"})
     List<Palavra> findAllByOrderByCriadoEmAscIdAsc();
 
     @EntityGraph(attributePaths = {"categorias", "criadoPor", "atualizadoPor"})
     Optional<Palavra> findDetalhadaById(Long id);
 
-    /** Verifica se já existe uma palavra com o mesmo texto, sem diferenciar maiúsculas e minúsculas. */
     boolean existsByPalavraIgnoreCase(String palavra);
 
-    /** Igual a {@link #existsByPalavraIgnoreCase}, mas ignora a própria palavra (usado na atualização). */
     boolean existsByPalavraIgnoreCaseAndIdNot(String palavra, Long id);
 
-    /** Indica se alguma palavra está vinculada à categoria. */
     boolean existsByCategorias_Id(Long categoriaId);
 
-    /**
-     * Sorteia palavras que pertencem a pelo menos uma das categorias informadas.
-     * A subconsulta evita repetir a mesma palavra quando ela está em mais de uma categoria.
-     */
     @Query(value = """
             SELECT p.* FROM palavras p
             WHERE p.id IN (SELECT pc.palavra_id FROM palavras_categorias pc
@@ -42,11 +34,9 @@ public interface PalavraRepository extends JpaRepository<Palavra, Long> {
     List<Palavra> sortearPorCategorias(@Param("categoriaIds") Collection<Long> categoriaIds,
                                        @Param("limite") int limite);
 
-    /** Sorteia palavras de qualquer categoria. */
     @Query(value = "SELECT p.* FROM palavras p ORDER BY random() LIMIT :limite", nativeQuery = true)
     List<Palavra> sortear(@Param("limite") int limite);
 
-    /** Sorteia palavras de qualquer categoria, ignorando os ids informados (lista não vazia). */
     @Query(value = """
             SELECT p.* FROM palavras p
             WHERE p.id NOT IN (:excluir)

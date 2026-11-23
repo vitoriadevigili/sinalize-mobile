@@ -111,7 +111,7 @@ class CategoriaControllerTest {
                 .andExpect(jsonPath("$.message").value("Dados inválidos."))
                 .andExpect(jsonPath("$.campos", hasSize(2)))
                 .andExpect(jsonPath("$.campos[0].campo").value("descricao"))
-                .andExpect(jsonPath("$.campos[0].mensagem").value("O campo descricao é obrigatório."))
+                .andExpect(jsonPath("$.campos[0].mensagem").value("A descrição é obrigatória."))
                 .andExpect(jsonPath("$.campos[1].campo").value("nome"))
                 .andExpect(jsonPath("$.campos[1].mensagem").value("O campo nome é obrigatório."));
 

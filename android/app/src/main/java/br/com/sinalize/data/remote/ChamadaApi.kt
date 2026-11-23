@@ -6,20 +6,12 @@ import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import java.io.IOException
 
-/** Erro de uma chamada à API, já com uma mensagem pronta para mostrar ao usuário. */
 class ErroApi(
     mensagem: String,
     val status: Int? = null,
     causa: Throwable? = null,
 ) : Exception(mensagem, causa)
 
-/**
- * Executa uma chamada à API e devolve [Result]:
- * - sucesso: o valor;
- * - erro HTTP: a mensagem enviada pelo back-end (campo "message" do ErrorResponse; em erros de
- *   validação, as mensagens de cada campo);
- * - sem conexão: uma mensagem pedindo para verificar se o back-end está rodando.
- */
 internal suspend fun <T> chamarApi(json: Json, chamada: suspend () -> T): Result<T> =
     try {
         Result.success(chamada())

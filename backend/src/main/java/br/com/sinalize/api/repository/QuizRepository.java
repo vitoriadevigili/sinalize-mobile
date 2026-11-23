@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
 
-    /** Carrega o quiz com usuário, itens e palavras em uma única consulta. */
     @EntityGraph(attributePaths = {"usuario", "itens", "itens.palavra"})
     Optional<Quiz> findDetalhadoById(Long id);
 

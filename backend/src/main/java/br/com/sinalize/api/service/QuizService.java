@@ -62,13 +62,6 @@ public class QuizService {
                 .orElseThrow(() -> new RecursoNaoEncontradoException(QUIZ_NAO_ENCONTRADO));
     }
 
-    /**
-     * Cria um quiz sorteando até {@code sinalize.quiz.quantidade-palavras} palavras distintas
-     * das categorias informadas.
-     *
-     * @throws RecursoNaoEncontradoException se alguma categoria não existir
-     * @throws RegraNegocioException         se as categorias não tiverem nenhuma palavra
-     */
     @Transactional
     public QuizResponse criar(QuizRequest request) {
         List<Long> categoriaIds = categoriaService.buscarEntidadesPorIds(request.categoriaIds()).stream()
@@ -86,12 +79,6 @@ public class QuizService {
         return QuizResponse.from(quizRepository.save(quiz));
     }
 
-    /**
-     * Registra se o jogador acertou a palavra. Cada palavra só pode ser respondida uma vez.
-     *
-     * @throws RecursoNaoEncontradoException se o item não existir
-     * @throws ConflitoException             se o item já tiver sido respondido
-     */
     @Transactional
     public QuizPalavraResponse responder(Long quizPalavraId, RespostaRequest request) {
         QuizPalavra item = quizPalavraRepository.findComPalavraById(quizPalavraId)

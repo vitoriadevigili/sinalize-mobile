@@ -83,10 +83,6 @@ public class CategoriaService {
         return CategoriaResponse.from(categoria);
     }
 
-    /**
-     * Exclui a categoria. Categorias com palavras vinculadas são mantidas: excluí-las
-     * poderia deixar palavras sem nenhuma categoria, o que a regra de palavras não permite.
-     */
     @Transactional
     public void excluir(Long id) {
         if (!categoriaRepository.existsById(id)) {
@@ -98,11 +94,6 @@ public class CategoriaService {
         categoriaRepository.deleteById(id);
     }
 
-    /**
-     * Busca as categorias pelos ids informados (ignorando repetições), para uso por outros serviços.
-     *
-     * @throws RecursoNaoEncontradoException se algum id não existir
-     */
     public List<Categoria> buscarEntidadesPorIds(Collection<Long> ids) {
         Set<Long> idsUnicos = new LinkedHashSet<>(ids);
         Map<Long, Categoria> encontradas = categoriaRepository.findAllById(idsUnicos).stream()

@@ -12,11 +12,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * Regra de senha do projeto original: de 6 a 20 caracteres, com pelo menos uma letra
- * maiúscula, uma minúscula e um número ou símbolo. Valores {@code null} são aceitos
- * (combine com {@code @NotBlank} quando a senha for obrigatória).
- */
 @Documented
 @Constraint(validatedBy = {})
 @Size(min = 6, max = 20)

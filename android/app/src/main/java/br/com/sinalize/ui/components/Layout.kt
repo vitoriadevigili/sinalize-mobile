@@ -118,7 +118,6 @@ fun HeaderBar(onMenu: () -> Unit) {
 
 @Composable
 fun Footer(modifier: Modifier = Modifier) {
-    // Celular deitado: pouca altura, então o rodapé fica mais baixo para caber na tela.
     val telaBaixa = LocalConfiguration.current.screenHeightDp < 500
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val compacto = Responsivo.ehCompacto(maxWidth)
@@ -182,7 +181,6 @@ fun ConteudoComRodape(
 fun IconesDaBarraDeStatus(claros: Boolean) {
     val view = LocalView.current
     if (view.isInEditMode) return
-    // Reaplica ao girar a tela: a Activity não é recriada (configChanges) e o sistema pode resetar a cor.
     val orientacao = LocalConfiguration.current.orientation
     DisposableEffect(claros, orientacao) {
         val window = (view.context as? Activity)?.window
