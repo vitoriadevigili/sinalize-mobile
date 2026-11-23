@@ -114,7 +114,6 @@ fun DicionarioScreen(
 private fun ConteudoDoDicionario(estado: DicionarioUiState, viewModel: DicionarioViewModel) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val larguraTotal = maxWidth
-        // Conteúdo limitado a 1200dp e centralizado; o que sobra vira margem lateral.
         val margem: Dp = max(16.dp, (larguraTotal - Responsivo.LARGURA_MAXIMA_PAGINA) / 2)
         val colunas = Responsivo.colunasDoDicionario(larguraTotal - margem * 2)
         val estadoDaGrade = rememberLazyGridState()

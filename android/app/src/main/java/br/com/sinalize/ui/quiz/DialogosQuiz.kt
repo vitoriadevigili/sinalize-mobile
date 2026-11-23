@@ -66,8 +66,6 @@ fun SelecaoDeCategoriasDialog(
         onDismissRequest = { if (!preparando) onCancelar() },
         properties = DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
-        // O fundo azul não fecha o quiz ao ser tocado: assim, tocar fora da lista de categorias
-        // só fecha a lista. Para sair, use o "x", "Cancelar" ou o botão voltar.
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -132,7 +130,6 @@ fun SelecaoDeCategoriasDialog(
                             modifier = Modifier.padding(top = 12.dp, bottom = 16.dp),
                         )
                         if (mensagemErro != null) {
-                            // Ex.: back-end fora do ar. Fica dentro da janela para a pessoa ver.
                             Column(
                                 modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally,

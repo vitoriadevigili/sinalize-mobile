@@ -49,7 +49,6 @@ public class QuizController {
         return ResponseEntity.created(location).body(criado);
     }
 
-    /** Registra a resposta do jogador para uma palavra do quiz. */
     @PatchMapping("/palavras/{quizPalavraId}/responder")
     public QuizPalavraResponse responder(@PathVariable Long quizPalavraId,
                                          @Valid @RequestBody RespostaRequest request) {

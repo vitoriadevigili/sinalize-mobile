@@ -6,11 +6,6 @@ import org.springframework.http.HttpStatus;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-/**
- * Corpo padrão de todas as respostas de erro da API.
- *
- * @param campos erros de validação por campo; só aparece em respostas 400 de validação
- */
 public record ErrorResponse(
         OffsetDateTime timestamp,
         int status,

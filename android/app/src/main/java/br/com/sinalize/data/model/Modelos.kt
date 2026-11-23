@@ -8,7 +8,6 @@ data class UsuarioResumo(
 data class CategoriaResumo(
     val id: Long,
     val nome: String,
-    /** A API não manda a descrição nas categorias de uma palavra; aí fica vazia. */
     val descricao: String = "",
 )
 

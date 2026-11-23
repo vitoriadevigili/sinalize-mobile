@@ -5,11 +5,6 @@ import br.com.sinalize.data.model.CategoriaResumo
 import br.com.sinalize.data.model.Palavra
 import br.com.sinalize.data.model.UsuarioResumo
 
-/**
- * Registros ilustrativos usados enquanto o app não está ligado à API.
- * São os mesmos dados de backend/src/main/resources/db/migration/V2__dados_iniciais.sql,
- * para que a troca pelos dados reais (etapa A2) não mude o que aparece na tela.
- */
 object DadosIlustrativos {
 
     val administrador = UsuarioResumo(id = 1, nome = "Administrador")
@@ -33,7 +28,6 @@ object DadosIlustrativos {
 
         "Azul" to listOf(3L), "Vermelho" to listOf(3L), "Verde" to listOf(3L), "Amarelo" to listOf(3L),
         "Branco" to listOf(3L), "Preto" to listOf(3L), "Rosa" to listOf(3L),
-        // "Laranja" está em Cores e em Alimentos, como no banco.
         "Laranja" to listOf(3L, 5L),
 
         "Cachorro" to listOf(4L), "Gato" to listOf(4L), "Cavalo" to listOf(4L), "Peixe" to listOf(4L),

@@ -8,10 +8,8 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-/** Endpoints da API REST do Sinalize (ver a tabela de endpoints no README). */
 interface SinalizeApi {
 
-    // ---- Categorias ----
 
     @GET("categorias")
     suspend fun listarCategorias(): List<CategoriaDto>
@@ -25,7 +23,6 @@ interface SinalizeApi {
     @DELETE("categorias/{id}")
     suspend fun excluirCategoria(@Path("id") id: Long)
 
-    // ---- Palavras ----
 
     @GET("palavras")
     suspend fun listarPalavras(): List<PalavraDto>
@@ -39,14 +36,12 @@ interface SinalizeApi {
     @DELETE("palavras/{id}")
     suspend fun excluirPalavra(@Path("id") id: Long)
 
-    /** Ex.: palavras/aleatorias?excluir=3,8&quantidade=3 */
     @GET("palavras/aleatorias")
     suspend fun palavrasAleatorias(
         @Query("excluir") excluir: String,
         @Query("quantidade") quantidade: Int,
     ): List<PalavraResumoDto>
 
-    // ---- Quizzes ----
 
     @POST("quizzes")
     suspend fun criarQuiz(@Body corpo: QuizRequestDto): QuizDto

@@ -5,7 +5,6 @@ import br.com.sinalize.api.validation.SenhaForte;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
-/** Corpo de {@code PATCH /usuarios/{id}}. Campos omitidos não são alterados. */
 public record UsuarioAtualizacaoRequest(
 
         @NaoVazioSePresente(message = "O campo nome não pode estar em branco.")
@@ -20,7 +19,6 @@ public record UsuarioAtualizacaoRequest(
         @SenhaForte
         String senha) {
 
-    /** Evita que a senha apareça em logs caso o objeto seja impresso. */
     @Override
     public String toString() {
         return "UsuarioAtualizacaoRequest[nome=" + nome + ", email=" + email

@@ -9,7 +9,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
-/** Testa o contrato com a API (JSON em snake_case, rotas e mensagens de erro) contra um servidor falso. */
 class RepositoriosRemotosTest {
 
     private lateinit var servidor: MockWebServer

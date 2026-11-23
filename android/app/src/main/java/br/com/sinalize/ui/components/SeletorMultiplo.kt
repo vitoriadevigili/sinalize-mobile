@@ -82,7 +82,6 @@ fun SeletorMultiplo(
                 .background(Color.White)
                 .border(1.dp, if (aberto) AzulSinalize else BordaCampo, RoundedCornerShape(6.dp))
                 .clickable(enabled = habilitado) {
-                    // Fecha o teclado (se outro campo estava em edição) para a lista não ficar escondida.
                     gerenciadorDeFoco.clearFocus()
                     teclado?.hide()
                     aberto = !aberto

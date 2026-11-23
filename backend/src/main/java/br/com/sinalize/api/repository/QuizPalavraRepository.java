@@ -8,7 +8,6 @@ import java.util.Optional;
 
 public interface QuizPalavraRepository extends JpaRepository<QuizPalavra, Long> {
 
-    /** Indica se a palavra já foi usada em algum quiz (nesse caso ela não pode ser excluída). */
     boolean existsByPalavraId(Long palavraId);
 
     @EntityGraph(attributePaths = "palavra")

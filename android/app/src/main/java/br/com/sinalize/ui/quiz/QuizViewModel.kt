@@ -29,7 +29,6 @@ data class QuizUiState(
     val carregandoCategorias: Boolean = true,
     val selecionadas: List<Long> = emptyList(),
     val preparando: Boolean = false,
-    /** Já tocou em "Começar", mas o avatar do VLibras ainda está carregando. */
     val aguardandoAvatar: Boolean = false,
     val quiz: Quiz? = null,
     val indice: Int = 0,
@@ -67,10 +66,6 @@ class QuizViewModel(
 
     private var tarefa: Job? = null
 
-    /**
-     * O quiz só começa quando o avatar terminou de carregar (ou falhou e mostra "Tentar novamente"),
-     * para a primeira pergunta não aparecer sem o sinal. A tela informa isso com [definirAvatarDisponivel].
-     */
     private val avatarDisponivel = MutableStateFlow(false)
 
     fun definirAvatarDisponivel(disponivel: Boolean) {
@@ -81,7 +76,6 @@ class QuizViewModel(
         carregarCategorias()
     }
 
-    /** Busca as categorias (GET /categorias). Também é o "Tentar novamente" da janela de categorias. */
     fun carregarCategorias() {
         _uiState.update { it.copy(carregandoCategorias = true, erro = null) }
         viewModelScope.launch {
@@ -183,10 +177,6 @@ class QuizViewModel(
     fun erroExibido() = _uiState.update { it.copy(erro = null) }
 
     companion object {
-        /**
-         * Tempo mínimo do "Preparando o seu quiz...". Na web eram 3 s fixos (para dar tempo ao VLibras);
-         * aqui o quiz espera o avatar de verdade, então basta um instante para a transição não piscar.
-         */
         const val ESPERA_PREPARO_MS = 800L
 
         const val ESPERA_AVANCO_MS = 1_500L

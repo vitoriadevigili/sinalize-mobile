@@ -12,7 +12,6 @@ class MainActivity : ComponentActivity() {
 
     private val vlibras get() = (application as SinalizeApplication).container.vlibras
 
-    /** Pedido da permissão de rede local (Android 17+, só no build de depuração; ver PermissaoRedeLocal). */
     private val pedirRedeLocal = registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +25,6 @@ class MainActivity : ComponentActivity() {
                 SinalizeNavHost()
             }
         }
-        // O avatar do VLibras demora para carregar: começa já, ainda na Home,
-        // para estar pronto quando a pessoa entrar no Quiz.
         vlibras.estacionar(this)
         vlibras.iniciar()
     }

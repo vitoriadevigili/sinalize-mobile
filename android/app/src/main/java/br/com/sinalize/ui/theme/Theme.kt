@@ -27,7 +27,6 @@ private val CoresSinalize = lightColorScheme(
     error = VermelhoExcluir,
 )
 
-/** O site é claro; o app segue a mesma identidade, sem tema escuro. */
 @Composable
 fun SinalizeTheme(content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = CoresSinalize, typography = Typography, content = content)

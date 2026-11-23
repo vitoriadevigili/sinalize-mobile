@@ -43,14 +43,6 @@ import br.com.sinalize.ui.theme.AzulSinalize
 import br.com.sinalize.vlibras.EstadoVLibras
 import br.com.sinalize.vlibras.MotorVLibras
 
-/**
- * Área do avatar no quiz (QuizPage.tsx): caixa 16:9 com cantos arredondados, com o VLibras dentro.
- * - "Carregando personagem 3D..." até o avatar ficar pronto;
- * - "Montando o seu quiz..." enquanto o quiz é criado;
- * - aviso com "Tentar novamente" se não der para carregar (ex.: sem internet);
- * - botão "Repetir" para ver o sinal de novo, durante as perguntas.
- * A altura é limitada para caber em celular deitado.
- */
 @Composable
 fun AreaDoVLibras(
     motor: MotorVLibras,
@@ -61,7 +53,6 @@ fun AreaDoVLibras(
 ) {
     val estado by motor.estado.collectAsStateWithLifecycle()
 
-    // Envia a palavra ao avatar sempre que ela muda (se ainda estiver carregando, ele sinaliza ao ficar pronto).
     LaunchedEffect(palavra) { motor.sinalizar(palavra) }
 
     Box(
@@ -94,7 +85,6 @@ fun AreaDoVLibras(
     }
 }
 
-/** Mostra a WebView do avatar (que é do app inteiro) dentro desta área enquanto ela estiver na tela. */
 @Composable
 private fun AvatarVLibras(motor: MotorVLibras, modifier: Modifier) {
     val contexto = LocalContext.current
@@ -103,14 +93,12 @@ private fun AvatarVLibras(motor: MotorVLibras, modifier: Modifier) {
         motor.exibirEm(container)
         onDispose { motor.devolverDe(container) }
     }
-    // Ao recarregar ("Tentar novamente") a WebView muda: o estado novo dispara a reexibição.
     val estado by motor.estado.collectAsStateWithLifecycle()
     LaunchedEffect(estado) { motor.exibirEm(container) }
 
     AndroidView(factory = { container }, modifier = modifier)
 }
 
-/** Botão "Repetir" sobre o avatar, no canto inferior direito. */
 @Composable
 private fun BotaoRepetir(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(

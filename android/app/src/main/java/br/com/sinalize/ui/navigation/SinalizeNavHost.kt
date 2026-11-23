@@ -9,7 +9,6 @@ import br.com.sinalize.ui.dicionario.DicionarioScreen
 import br.com.sinalize.ui.home.HomeScreen
 import br.com.sinalize.ui.quiz.QuizScreen
 
-/** Rotas equivalentes às do App.tsx ("/", "/quiz", "/dictionary"). */
 object Rotas {
     const val HOME = "home"
     const val QUIZ = "quiz"

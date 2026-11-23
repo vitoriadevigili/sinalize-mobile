@@ -31,7 +31,7 @@ class UsuarioServiceTest {
     @Mock
     private UsuarioRepository usuarioRepository;
 
-    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4); // custo baixo: teste rápido
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4); 
 
     private UsuarioService usuarioService;
 

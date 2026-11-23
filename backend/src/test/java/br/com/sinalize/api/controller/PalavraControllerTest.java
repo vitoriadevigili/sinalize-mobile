@@ -186,14 +186,14 @@ class PalavraControllerTest {
 
     @Test
     void excluirPalavraUsadaEmQuizDevolve409() throws Exception {
-        doThrow(new ConflitoException("A palavra não pode ser excluída porque já foi usada em um quiz."))
+        doThrow(new ConflitoException("Não é possível excluir a palavra: ela já foi usada em um quiz."))
                 .when(palavraService).excluir(4L);
 
         mockMvc.perform(delete("/palavras/4"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.message")
-                        .value("A palavra não pode ser excluída porque já foi usada em um quiz."));
+                        .value("Não é possível excluir a palavra: ela já foi usada em um quiz."));
     }
 
     @Test

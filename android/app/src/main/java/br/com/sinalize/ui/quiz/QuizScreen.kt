@@ -35,14 +35,12 @@ fun QuizScreen(
     val estado by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbar = remember { SnackbarHostState() }
 
-    // Avatar do VLibras (já vem carregando desde a Home). O quiz só começa quando ele estiver disponível.
     val motor = (LocalContext.current.applicationContext as SinalizeApplication).container.vlibras
     val estadoAvatar by motor.estado.collectAsStateWithLifecycle()
     LaunchedEffect(estadoAvatar) {
         viewModel.definirAvatarDisponivel(estadoAvatar != EstadoVLibras.Carregando)
     }
 
-    // Na escolha de categorias o erro aparece dentro da janela; nas outras fases, num aviso (snackbar).
     LaunchedEffect(estado.erro, estado.fase) {
         if (estado.fase == FaseQuiz.SELECIONANDO) return@LaunchedEffect
         estado.erro?.let {
@@ -68,7 +66,6 @@ fun QuizScreen(
                                 BarraDeProgresso(estado.resultados, estado.indice)
                             }
 
-                            // Como na web: o avatar só sinaliza durante o jogo (e repete a última no resultado).
                             val jogandoOuFim = estado.fase == FaseQuiz.JOGANDO || estado.fase == FaseQuiz.FINALIZADO
                             AreaDoVLibras(
                                 motor = motor,

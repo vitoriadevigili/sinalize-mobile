@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-/** Corpo de {@code POST /usuarios}. */
 public record UsuarioRequest(
 
         @NotBlank(message = "O campo nome é obrigatório.")
@@ -21,7 +20,6 @@ public record UsuarioRequest(
         @SenhaForte
         String senha) {
 
-    /** Evita que a senha apareça em logs caso o objeto seja impresso. */
     @Override
     public String toString() {
         return "UsuarioRequest[nome=" + nome + ", email=" + email + ", senha=***]";
