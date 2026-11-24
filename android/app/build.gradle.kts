@@ -21,8 +21,6 @@ android {
 
         val apiUrl = (project.findProperty("sinalizeApiUrl") as String?) ?: "http://10.0.2.2:8080/"
         buildConfigField("String", "API_BASE_URL", "\"$apiUrl\"")
-        val ilustrativos = (project.findProperty("sinalizeDadosIlustrativos") as String?)?.toBoolean() ?: false
-        buildConfigField("boolean", "USAR_DADOS_ILUSTRATIVOS", ilustrativos.toString())
     }
 
     buildTypes {

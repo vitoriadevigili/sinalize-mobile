@@ -98,14 +98,9 @@ A API sobe em `http://localhost:8080`. Para conferir, acesse `/actuator/health`:
 3. Selecione a configuração `app` e clique em **Run**.
 4. Na primeira vez, toque em **Permitir** quando o Android pedir acesso a dispositivos próximos. Essa permissão é necessária para o app alcançar a API na rede local.
 
-### Opções de compilação
+### Endereço da API
 
-Passadas com `-P` no terminal ou no arquivo `android/gradle.properties`:
-
-| Opção | Uso |
-| --- | --- |
-| `sinalizeApiUrl` | Endereço da API (padrão `http://10.0.2.2:8080/`). Em celular físico, use o IP do computador na rede Wi-Fi, por exemplo `-PsinalizeApiUrl=http://192.168.0.10:8080/` |
-| `sinalizeDadosIlustrativos=true` | O app usa dados de exemplo e funciona sem o back-end |
+Por padrão, o app acessa a API em `http://10.0.2.2:8080/`, endereço que o emulador usa para chegar ao computador. Em celular físico, passe o IP do computador na rede Wi-Fi com `-PsinalizeApiUrl` no terminal ou no arquivo `android/gradle.properties`, por exemplo `-PsinalizeApiUrl=http://192.168.0.10:8080/`.
 
 ### Problemas comuns
 
