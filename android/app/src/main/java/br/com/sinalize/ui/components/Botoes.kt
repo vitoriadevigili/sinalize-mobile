@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -112,6 +113,7 @@ fun ConfirmDialog(
     onCancelar: () -> Unit,
     texto: String? = null,
     perigoso: Boolean = false,
+    snackbar: SnackbarHostState? = null,
 ) {
     AlertDialog(
         onDismissRequest = onCancelar,
@@ -124,7 +126,10 @@ fun ConfirmDialog(
                 modifier = Modifier.size(28.dp),
             )
         },
-        title = { Text(titulo, fontSize = 18.sp, fontWeight = FontWeight.SemiBold) },
+        title = {
+            Text(titulo, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            snackbar?.let { SnackbarSobreposto(it) }
+        },
         text = texto?.let { { Text(it, fontSize = 15.sp) } },
         confirmButton = {
             BotaoPrimario(

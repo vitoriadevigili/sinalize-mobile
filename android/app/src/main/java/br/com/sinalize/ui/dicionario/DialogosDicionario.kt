@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,6 +31,7 @@ import br.com.sinalize.ui.components.BotaoPrimario
 import br.com.sinalize.ui.components.BotaoSecundario
 import br.com.sinalize.ui.components.OpcaoSelecao
 import br.com.sinalize.ui.components.SeletorMultiplo
+import br.com.sinalize.ui.components.SnackbarSobreposto
 import br.com.sinalize.ui.theme.AzulSinalize
 import br.com.sinalize.ui.theme.BordaCampo
 import br.com.sinalize.ui.theme.TextoEscuro
@@ -40,6 +42,7 @@ fun PalavraDialog(
     palavraEditada: Palavra?,
     categorias: List<Categoria>,
     salvando: Boolean,
+    snackbar: SnackbarHostState,
     onCancelar: () -> Unit,
     onSalvar: (palavra: String, categoriaIds: List<Long>) -> Unit,
 ) {
@@ -61,6 +64,7 @@ fun PalavraDialog(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
             )
+            SnackbarSobreposto(snackbar)
         },
         text = {
             val rolagem = rememberScrollState()
@@ -111,6 +115,7 @@ fun PalavraDialog(
 fun CategoriaDialog(
     categoriaEditada: Categoria?,
     salvando: Boolean,
+    snackbar: SnackbarHostState,
     onCancelar: () -> Unit,
     onSalvar: (nome: String, descricao: String) -> Unit,
 ) {
@@ -128,6 +133,7 @@ fun CategoriaDialog(
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
             )
+            SnackbarSobreposto(snackbar)
         },
         text = {
             val rolagem = rememberScrollState()

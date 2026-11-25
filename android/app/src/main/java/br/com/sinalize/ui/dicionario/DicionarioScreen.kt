@@ -79,7 +79,9 @@ fun DicionarioScreen(
                 estado.erro != null -> ErroAoCarregar(estado.erro!!, viewModel::carregar)
                 else -> ConteudoDoDicionario(estado, viewModel)
             }
-            SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding())
+            if (estado.dialogo == null) {
+                SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding())
+            }
         }
     }
 
@@ -88,12 +90,14 @@ fun DicionarioScreen(
             palavraEditada = dialogo.palavra,
             categorias = estado.categorias,
             salvando = estado.salvando,
+            snackbar = snackbar,
             onCancelar = viewModel::fecharDialogo,
             onSalvar = { texto, ids -> viewModel.salvarPalavra(dialogo.palavra?.id, texto, ids) },
         )
         is DialogoDicionario.EditarCategoria -> CategoriaDialog(
             categoriaEditada = dialogo.categoria,
             salvando = estado.salvando,
+            snackbar = snackbar,
             onCancelar = viewModel::fecharDialogo,
             onSalvar = { nome, descricao -> viewModel.salvarCategoria(dialogo.categoria?.id, nome, descricao) },
         )
@@ -103,6 +107,7 @@ fun DicionarioScreen(
             rotuloConfirmar = "Sim, excluir",
             rotuloCancelar = "Cancelar",
             perigoso = true,
+            snackbar = snackbar,
             onConfirmar = viewModel::confirmarExclusao,
             onCancelar = viewModel::fecharDialogo,
         )
