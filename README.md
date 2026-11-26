@@ -17,7 +17,7 @@ Aplicativo **Android** para aprender **Libras** (Língua Brasileira de Sinais) d
 
 O **Sinalize Mobile** leva o quiz **Sinalize** para o celular. Um avatar 3D do **VLibras** executa o sinal de uma palavra, e o jogador escolhe, entre quatro alternativas, qual palavra foi sinalizada.
 
-O projeto nasceu na disciplina de Informática na Educação (React e NestJS) e foi adaptado para dispositivos móveis em **Programação para Dispositivos Móveis**. O app reproduz as telas e a identidade visual da versão web e se adapta a celulares e tablets, na vertical e na horizontal.
+O projeto nasceu na disciplina de Informática na Educação (React e NestJS) e foi adaptado para dispositivos móveis em **Programação para Dispositivos Móveis** (API Java). O app reproduz as telas e a identidade visual da versão web e se adapta a celulares e tablets, na vertical e na horizontal.
 
 O repositório tem o **app Android** (`android/`) e a **API REST** com o banco de dados (`backend/`).
 
@@ -27,27 +27,27 @@ O repositório tem o **app Android** (`android/`) e a **API REST** com o banco d
 
 ## Funcionalidades
 
-| Tela | O que o usuário faz |
-| --- | --- |
-| Página inicial | Acessa o quiz, o dicionário e as informações do projeto |
-| Quiz | Escolhe categorias, assiste ao sinal do avatar e responde. A resposta fica verde ou vermelha, o progresso aparece no topo e o resultado é mostrado no final. O botão **Repetir** faz o avatar sinalizar de novo |
-| Dicionário | Consulta, cadastra, edita e exclui palavras e categorias, com busca, filtro por letra e ordenação |
+| Tela           | O que o usuário faz                                                                                                                                                                                             |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Página inicial | Acessa o quiz, o dicionário e as informações do projeto                                                                                                                                                         |
+| Quiz           | Escolhe categorias, assiste ao sinal do avatar e responde. A resposta fica verde ou vermelha, o progresso aparece no topo e o resultado é mostrado no final. O botão **Repetir** faz o avatar sinalizar de novo |
+| Dicionário     | Consulta, cadastra, edita e exclui palavras e categorias, com busca, filtro por letra e ordenação                                                                                                               |
 
-Recursos de dispositivos móveis: layout responsivo (de 1 a 4 colunas, conforme a tela), suporte a retrato e paisagem, arquitetura MVVM, comunicação com a API por Retrofit, avatar do VLibras em uma `WebView` e um modo com dados de exemplo que funciona sem o back-end.
+Recursos de dispositivos móveis: layout responsivo (de 1 a 4 colunas, conforme a tela), suporte a retrato e paisagem, arquitetura MVVM, comunicação com a API por Retrofit e avatar do VLibras em uma `WebView`.
 
 ---
 
 ## Tecnologias utilizadas
 
-| Camada | Tecnologia |
-| --- | --- |
-| App | Kotlin, Jetpack Compose e Material 3 |
-| Arquitetura | MVVM (ViewModel e Navigation Compose) |
-| Rede | Retrofit, OkHttp e kotlinx.serialization |
-| Sinalização | VLibras, em uma `WebView` |
-| API | Java 21 e Spring Boot 3.5 (Web, Data JPA e Bean Validation) |
-| Banco de dados | PostgreSQL 16 e Flyway |
-| Ambiente | Docker Compose |
+| Camada         | Tecnologia                                                  |
+| -------------- | ----------------------------------------------------------- |
+| App            | Kotlin, Jetpack Compose e Material 3                        |
+| Arquitetura    | MVVM (ViewModel e Navigation Compose)                       |
+| Rede           | Retrofit, OkHttp e kotlinx.serialization                    |
+| Sinalização    | VLibras, em uma `WebView`                                   |
+| API            | Java 21 e Spring Boot 3.5 (Web, Data JPA e Bean Validation) |
+| Banco de dados | PostgreSQL 16 e Flyway                                      |
+| Ambiente       | Docker Compose                                              |
 
 > Não é necessário instalar o Maven nem o Gradle: o projeto já inclui os wrappers (`mvnw` e `gradlew`).
 
@@ -94,7 +94,7 @@ A API sobe em `http://localhost:8080`. Para conferir, acesse `/actuator/health`:
 ### 3. Rodar o app
 
 1. Abra a pasta **`android/`** no Android Studio (não a raiz do repositório) e aguarde o Gradle sincronizar.
-2. No *Device Manager*, ligue um emulador com Android 8.0 ou superior.
+2. No _Device Manager_, ligue um emulador com Android 8.0 ou superior.
 3. Selecione a configuração `app` e clique em **Run**.
 4. Na primeira vez, toque em **Permitir** quando o Android pedir acesso a dispositivos próximos. Essa permissão é necessária para o app alcançar a API na rede local.
 
@@ -138,18 +138,17 @@ cd ..\android
 
 O Claude (Anthropic) foi usado como apoio na estruturação do projeto e na revisão do código e da documentação.
 
-
 ---
 
 ## Equipe
 
-| Integrante |
-| --- |
-| Pedro Paoli Neto |
+| Integrante                        |
+| --------------------------------- |
+| Pedro Paoli Neto                  |
 | Luís Felipe dos Anjos de Carvalho |
-| Isadora Pimenta de Oliveira |
-| Larissa Colzani |
-| Vitória Carolina Devigili |
+| Isadora Pimenta de Oliveira       |
+| Larissa Colzani                   |
+| Vitória Carolina Devigili         |
 
 **Professor:** Allan Rodrigo Leite
 
