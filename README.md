@@ -21,7 +21,7 @@ O projeto nasceu na disciplina de Informática na Educação (React e NestJS) e 
 
 O repositório tem o **app Android** (`android/`) e a **API REST** com o banco de dados (`backend/`).
 
-**Vídeo de apresentação:** [adicionar link]
+**Vídeo de apresentação:** https://drive.google.com/drive/folders/1rP0NsaoWwmVdvf3F_ByQs8vhrBnrLrVo?usp=sharing
 
 ---
 
