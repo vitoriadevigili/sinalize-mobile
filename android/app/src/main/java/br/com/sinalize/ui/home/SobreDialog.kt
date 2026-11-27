@@ -33,7 +33,7 @@ import br.com.sinalize.ui.components.BotaoPilula
 import br.com.sinalize.ui.theme.AzulSinalize
 import br.com.sinalize.ui.theme.TextoEscuro
 
-private const val REPOSITORIO = "https://github.com/paoli2004/sinalize-mobile"
+private const val REPOSITORIO = "https://github.com/vitoriadevigili/sinalize-mobile"
 
 private val alunos =listOf(
     "Pedro Paoli Neto",

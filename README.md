@@ -75,7 +75,7 @@ Os comandos valem para o PowerShell, na raiz do repositório. No Linux ou no Mac
 ### 1. Clonar e subir o banco
 
 ```bash
-git clone https://github.com/paoli2004/sinalize-mobile.git
+git clone https://github.com/vitoriadevigili/sinalize-mobile.git
 cd sinalize-mobile
 docker compose up -d
 ```
